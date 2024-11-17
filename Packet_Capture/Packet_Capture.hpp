@@ -7,7 +7,7 @@
 #include "../Queue/Queue.hpp"
 
 
-#define MAX_PACKET_SIZE 360
+#define MAX_PACKET_SIZE 630
 #define PROMISC 1
 #define READ_TIMOUT 1000 // If no packets recived in 1000ms
 #define LOOP_COUNT -1
@@ -19,6 +19,8 @@ class PacketCapture {
 
         bool StartCapture();
     
+        static Queue ReciveQueue;
+
     private:
         static void packetHandler(u_char* GlobalData, const struct pcap_pkthdr* PacketHeader, const u_char* PacketData);
         bool SetIPAddress(const std::string& device, const std::string& IpAddress);
@@ -29,8 +31,8 @@ class PacketCapture {
         char ErrBuffer[PCAP_ERRBUF_SIZE];
         std::string Device;
         std::string IpAddress;
-        static Queue ReciveQueue;
         pcap_t* Handle;
+
 };
 
 

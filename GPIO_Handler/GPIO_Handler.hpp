@@ -7,7 +7,8 @@
 
 #define GPIO_ON 1
 #define GPIO_OFF 0
-
+#define GPIO_OUT "OUT"
+#define GPIO_IN "in"
 
 class GPIO {
 

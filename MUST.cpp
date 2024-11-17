@@ -6,9 +6,9 @@ int main() {
 
     /*GPIO make the OS crash*/
     // std::cout << "Setting up gpio to '1'" << std::endl;
-    // GPIO Green(506,"out");
+    // GPIO Green(506,GPIO_OUT);
     // Green.GPIO_SetValue(GPIO_ON);
-    // GPIO Orange(507,"out");
+    // GPIO Orange(507,GPIO_OUT);
     // Orange.GPIO_SetValue(GPIO_ON);
 
 
