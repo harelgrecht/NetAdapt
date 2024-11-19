@@ -5,9 +5,10 @@
 #include <cstddef> 
 #include <iostream>
 #include <cstring>
+#include <mutex>
 
-constexpr int QUEUE_SIZE = 10;
-constexpr int PACKET_SIZE = 360; 
+#define QUEUE_SIZE 10
+#define PACKET_SIZE 360 
 
 class Queue {
 private:
@@ -15,7 +16,8 @@ private:
     size_t sizes[QUEUE_SIZE]; 
     int front;               
     int rear;                 
-    int count;               
+    int count;
+    std::mutex mutex;       
 public:
     Queue();                
     bool enqueue(const uint8_t* data, size_t size);

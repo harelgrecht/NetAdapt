@@ -13,7 +13,7 @@
 #define BUFFER_SIZE PACKET_SIZE * 5
 #define COMPRESSED_SIZE 360
 
-class Packet_Process {
+class PacketProcess {
     protected:
         static Queue SendQueue;
 
