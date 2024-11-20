@@ -3,7 +3,7 @@
 int main() {
     PacketCapture Capture(ReciverDevice,ReciverIP);
     std::thread CapturingThread([&Capture](){
-        if(!Capture.StartCapture()) {
+        if(!Capture.StartCapture(filter)) {
             std::cerr << "Failed to start capturing packets" << std::endl;
             return -1;
         }

@@ -17,7 +17,7 @@ class PacketCapture {
         PacketCapture(const std::string& EthDevice, std::string IpAddress);
         ~PacketCapture();
 
-        bool StartCapture();
+        bool StartCapture(const std::string& FilterString);
     
         static Queue ReciveQueue;
 
@@ -26,6 +26,7 @@ class PacketCapture {
         bool SetIPAddress(const std::string& device, const std::string& IpAddress);
 
         bool OpenDevice();
+        bool SetFilter(const std::string& FilterString);
 
 
         char ErrBuffer[PCAP_ERRBUF_SIZE];

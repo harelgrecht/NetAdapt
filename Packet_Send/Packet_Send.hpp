@@ -5,6 +5,8 @@
 
 class PacketSend {
     private:
+    static Queue SendQueue;
+
 
     public:
     

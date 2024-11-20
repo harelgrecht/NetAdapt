@@ -10,6 +10,7 @@ PacketCapture::~PacketCapture() {
 }
 
 bool PacketCapture::SetIPAddress(const std::string& device, const std::string& IpAddress) {
+    //TODO: change that so it wont use the system command
     std::string command = "sudo ifconfig " + device + " " + IpAddress;
     int result = system(command.c_str());
     if (result != 0) {
@@ -20,7 +21,6 @@ bool PacketCapture::SetIPAddress(const std::string& device, const std::string& I
     return true;
 }
 
-
 bool PacketCapture::OpenDevice() {
     Handle = pcap_open_live(Device.c_str(), MAX_PACKET_SIZE, PROMISC, READ_TIMOUT, ErrBuffer);
     if (Handle == nullptr){
@@ -30,11 +30,29 @@ bool PacketCapture::OpenDevice() {
     return true;
 }
 
-bool PacketCapture::StartCapture() {
+bool PacketCapture::SetFilter(const std::string& FilterString) {
+    if (!Handle) {
+        std::cerr << "Device is not open" << std::endl;
+        return false;
+    }
+    struct bpf_program filter;
+    if(pcap_compile(Handle, &filter, FilterString.c_str(),0, PCAP_NETMASK_UNKNOWN) == -1) {
+        std::cerr << "Failed to compile filter: " << pcap_geterr(Handle) << std::endl;
+        pcap_freecode(&filter);
+        return false; 
+    }
+    pcap_freecode(&filter);
+    std::cout << "Filter applied: " << FilterString << std::endl;
+    return true;
+}
+
+bool PacketCapture::StartCapture(const std::string& FilterString) {
     if  (OpenDevice() == false) {
         return false;
     }
-
+    if (!SetFilter(FilterString)) {
+        return false;
+    }
     std::cout << "Starting capturing ETH packets on device " << Device << std::endl;
     if(pcap_loop(Handle, LOOP_COUNT, packetHandler, reinterpret_cast<u_char*>(this)) < 0) {
         std::cerr << "Error capturing packets: " << pcap_geterr(Handle) << std::endl;
