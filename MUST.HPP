@@ -33,7 +33,7 @@
 
 #define ReciverIP "192.168.1.1"
 #define ReciverDevice "eth0"
-
+#define UDPHeaderSize 8
 std::string filter = "udp and src host 192.168.1.1";
 
 #define QUEUE_SIZE 10

@@ -62,7 +62,9 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
 }
 
 void PacketCapture::packetHandler(u_char* GlobalData, const struct pcap_pkthdr* PacketHeader, const u_char* PacketData) {
-    if(ReciveQueue.enqueue(PacketData, PacketHeader -> len) == true) 
+    const u_char *PayloadData = PacketData + UDPHeaderSize;
+    const size_t PayloadLen= PacketHeader -> len - 8; 
+    if(ReciveQueue.enqueue(PayloadData, PayloadLen) == true) 
         std::cout << "Packet in legnth: " << PacketHeader -> len << "Sent to the queue" << std::endl;
     else
         std::cout << "Failed to send the packet to the queue" << std::endl;
