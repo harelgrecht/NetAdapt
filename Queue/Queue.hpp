@@ -1,18 +1,11 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
-#include <cstdint> 
-#include <cstddef> 
-#include <iostream>
-#include <cstring>
-#include <mutex>
-
-#define QUEUE_SIZE 10
-#define PACKET_SIZE 360 
+#include "../MUST.HPP"
 
 class Queue {
 private:
-    uint8_t packets[QUEUE_SIZE][PACKET_SIZE]; 
+    u_char packets[QUEUE_SIZE][PACKET_SIZE]; 
     size_t sizes[QUEUE_SIZE]; 
     int front;               
     int rear;                 

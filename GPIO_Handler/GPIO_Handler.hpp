@@ -1,14 +1,6 @@
 #ifndef GPIO_HANDLER_H
 #define GPIO_HANDLER_H
 
-#include <iostream>
-#include <fstream>
-#include <string>
-
-#define GPIO_ON 1
-#define GPIO_OFF 0
-#define GPIO_OUT "OUT"
-#define GPIO_IN "in"
 
 class GPIO {
 

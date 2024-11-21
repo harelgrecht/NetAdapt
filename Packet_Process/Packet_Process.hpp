@@ -1,13 +1,7 @@
 #ifndef PACKET_PROCESS_HPP
 #define PACKET_PROCESS_HPP
 
-#include <iostream>
-#include <zlib.h>
-#include <vector>
-#include <cstring>
-#include <algorithm>
-#include "../Queue/Queue.hpp"
-#include "../Packet_Capture/Packet_Capture.hpp"
+#include "../MUST.HPP"
 
 #define PACKET_SIZE 630
 #define BUFFER_SIZE PACKET_SIZE * 5

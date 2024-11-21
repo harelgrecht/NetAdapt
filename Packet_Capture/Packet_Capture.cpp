@@ -1,4 +1,4 @@
-#include "Packet_Capture.hpp"
+#include "../MUST.HPP"
 
 PacketCapture::PacketCapture(const std::string& device, std::string IpAddress) : Device(device), IpAddress(IpAddress) {
     SetIPAddress(Device,IpAddress);

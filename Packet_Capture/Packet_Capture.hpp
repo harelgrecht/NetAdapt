@@ -1,16 +1,8 @@
 #ifndef PACKET_CAPTURE_HPP
 #define PACKET_CAPTURE_HPP
 
-#include <iostream>
-#include <pcap.h>
-#include <vector>
-#include "../Queue/Queue.hpp"
+#include "../MUST.HPP"
 
-
-#define MAX_PACKET_SIZE 630
-#define PROMISC 1
-#define READ_TIMOUT 1000 // If no packets recived in 1000ms
-#define LOOP_COUNT -1
 
 class PacketCapture {
     public:
