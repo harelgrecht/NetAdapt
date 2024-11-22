@@ -14,7 +14,7 @@ class PacketCapture {
         static Queue ReciveQueue;
 
     private:
-        static void packetHandler(u_char* GlobalData, const struct pcap_pkthdr* PacketHeader, const u_char* PacketData);
+        static void packetHandler(uint8_t* GlobalData, const struct pcap_pkthdr* PacketHeader, const uint8_t* PacketData);
         bool SetIPAddress(const std::string& device, const std::string& IpAddress);
 
         bool OpenDevice();

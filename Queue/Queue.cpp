@@ -11,7 +11,7 @@ bool Queue::isEmpty() const {
     return count == 0;
 }
 
-bool Queue::enqueue(const u_char* data, size_t size) {
+bool Queue::enqueue(const uint8_t* data, size_t size) {
     if (isFull() || size > PACKET_SIZE) return false;
     mutex.lock();
     //std::lock_guard<std::mutex> lock(mutex); //automaticlly locking and unlocking the mutex

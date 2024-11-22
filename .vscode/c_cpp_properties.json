@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/msys64/mingw64/include",
-                "${workspaceFolder}/Packet_Capture"
+                "${workspaceFolder}/Packet_Capture",
+                "C:/msys64/mingw64/include/pcap"
             ],
             "defines": [
                 "_DEBUG",
@@ -22,8 +23,9 @@
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
-            "intelliSenseMode": "windows-msvc-x64",
-            "configurationProvider": "ms-vscode.makefile-tools"
+            "intelliSenseMode": "${default}",
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "compilerPath": "C:/msys64/ucrt64/bin/g++.exe"
         }
     ],
     "version": 4

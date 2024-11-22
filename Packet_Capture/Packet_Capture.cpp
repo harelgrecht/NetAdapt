@@ -54,15 +54,15 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
         return false;
     }
     std::cout << "Starting capturing ETH packets on device " << Device << std::endl;
-    if(pcap_loop(Handle, LOOP_COUNT, packetHandler, reinterpret_cast<u_char*>(this)) < 0) {
+    if(pcap_loop(Handle, LOOP_COUNT, packetHandler, reinterpret_cast<uint8_t*>(this)) < 0) {
         std::cerr << "Error capturing packets: " << pcap_geterr(Handle) << std::endl;
         return false;
     }
     return true;
 }
 
-void PacketCapture::packetHandler(u_char* GlobalData, const struct pcap_pkthdr* PacketHeader, const u_char* PacketData) {
-    const u_char *PayloadData = PacketData + UDPHeaderSize;
+void PacketCapture::packetHandler(uint8_t* GlobalData, const struct pcap_pkthdr* PacketHeader, const uint8_t* PacketData) {
+    const uint8_t *PayloadData = PacketData + UDP_HEADER_SIZE;
     const size_t PayloadLen= PacketHeader -> len - 8; 
     if(ReciveQueue.enqueue(PayloadData, PayloadLen) == true) 
         std::cout << "Packet in legnth: " << PacketHeader -> len << "Sent to the queue" << std::endl;

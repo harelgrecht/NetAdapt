@@ -1,7 +1,7 @@
 #include "MUST.HPP"
 
 int main() {
-    PacketCapture Capture(ReciverDevice,ReciverIP);
+    PacketCapture Capture(RECIVER_DEVICE,RECIVER_IP);
     std::thread CapturingThread([&Capture](){
         if(!Capture.StartCapture(filter)) {
             std::cerr << "Failed to start capturing packets" << std::endl;

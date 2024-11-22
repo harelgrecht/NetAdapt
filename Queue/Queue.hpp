@@ -5,7 +5,7 @@
 
 class Queue {
 private:
-    u_char packets[QUEUE_SIZE][PACKET_SIZE]; 
+    uint8_t packets[QUEUE_SIZE][PACKET_SIZE]; 
     size_t sizes[QUEUE_SIZE]; 
     int front;               
     int rear;                 
