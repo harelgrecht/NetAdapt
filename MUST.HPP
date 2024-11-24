@@ -40,7 +40,7 @@
 #define RECIVER_IP "192.168.1.1"
 #define RECIVER_DEVICE "eth0"
 #define UDP_HEADER_SIZE 8
-std::string filter = "udp and src host 192.168.1.1";
+const std::string filter = "udp and src host 192.168.1.1";
 
 #define DESTINATION_IP "192.168.1.2"
 #define DESTINATION_PORT 5353 //what ever
