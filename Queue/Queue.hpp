@@ -17,7 +17,7 @@ public:
     bool dequeue(uint8_t* data, size_t& size);      
     bool isEmpty() const;                 
     bool isFull() const;
-    int packetsInQueue() const;            
+    int PacketsCount() const;            
 };
 
 #endif // QUEUE_HPP

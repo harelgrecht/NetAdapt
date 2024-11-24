@@ -35,6 +35,6 @@ bool Queue::dequeue(uint8_t* data, size_t& size) {
     mutex.unlock();
 }
 
-int Queue::packetsInQueue() const {
+int Queue::PacketsCount() const {
     return this -> count;
 }

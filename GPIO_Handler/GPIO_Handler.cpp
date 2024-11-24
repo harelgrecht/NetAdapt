@@ -2,45 +2,36 @@
 
 
 GPIO::GPIO(int pin, const std::string& direction) : PinNumber(pin), Direction(direction) {
-	GPIO_Export(pin);
-	GPIO_SetDirection(direction);
+	ExportGPIO(pin);
+	SetDirection(direction);
 }
 
-void GPIO::GPIO_Export(int pin) {
-	std::ofstream export_file("/sys/class/gpio/export");
-	if (export_file) {
-		export_file << pin;
-		export_file.close();
-	}
+void GPIO::ExportGPIO(int pin) {
+	WriteToFile(GPIO_EXPORT_PATH, std::to_string(pin));
 }
 
-void GPIO::GPIO_Unexport(int pin) {
-	std::ofstream unexport_file("/sys/class/gpio/unexport");
-	if (unexport_file) {
-		unexport_file << pin;
-		unexport_file.close();
-	}
+void GPIO::UnexportGPIO(int pin) {
+	WriteToFile(GPIO_UNEXPORT_PATH, std::to_string(pin));
 }
 
-void GPIO::GPIO_SetDirection(const std::string& direction) {
-	std::ofstream direction_file("/sys/class/gpio/gpio" + std::to_string(PinNumber) + "/direction");
-	if (direction_file) {
-		direction_file << direction;
-		direction_file.close();
-	}
+void GPIO::SetDirection(const std::string& direction) {
+	WriteToFile(GPIO_DIRECTION_PATH, direction);
 }
 
 
-void GPIO::GPIO_SetValue(int value) {
-	std::ofstream value_file("/sys/class/gpio/gpio" + std::to_string(PinNumber) + "/value");
-	if (value_file) {
-		value_file << value;
-		value_file.close();
-	}
+void GPIO::SetValue(int value) {
+	WriteToFile(GPIO_VALUE_PATH, std::to_string(value));
 }
 
 GPIO::~GPIO() {
-	GPIO_Unexport(PinNumber);
+	UnexportGPIO(PinNumber);
+}
+
+void GPIO::WriteToFile(const std::string& FilePath, const std::string& Data) {
+	std::ofstream file(FilePath);
+	if(!file.is_open() || file.fail())
+		std::cerr << "Failed to open the file" + FilePath << std::endl;
+	file << Data;
 }
 
 

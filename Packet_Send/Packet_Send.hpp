@@ -7,14 +7,18 @@
 class PacketSend {
     private:
         int Socket;
+        uint8_t *Payload;
+        size_t PayloadLen;
         void CreateSocket();
         void CloseSocket();
         
     public:
         PacketSend();
         ~PacketSend();
+        void GetPackets();
 
-        void SendPacket(const std::string& DestIP, const int& DestPort, const uint8_t& PayloadData, size_t PayloadLen);
+
+        void SendPacket(const std::string& DestIP, const int& DestPort);
 
 };
 
