@@ -1,0 +1,36 @@
+{
+    "gpio": {
+      "gpio1": 506,
+      "gpio2": 507,
+      "gpio_on": 1,
+      "gpio_off": 0,
+      "gpio_out": "OUT",
+      "gpio_in": "in",
+      "gpio_export_path": "/sys/class/gpio/export",
+      "gpio_unexport_path": "/sys/class/gpio/unexport",
+      "gpio_direction_path": "/sys/class/gpio/gpio{pinNumber}/direction",
+      "gpio_value_path": "/sys/class/gpio/gpio{pinNumber}/value"
+    },
+    "packet_configurations": {
+      "max_packet_size": 630,
+      "promisc": 1,
+      "read_timeout": 1000,
+      "loop_count": -1,
+      "udp_header_size": 8,
+      "filter": "udp and src host 192.168.1.1"
+    },
+    "network_configurations": {
+      "receiver_ip": "192.168.1.1",
+      "receiver_device": "eth0",
+      "destination_ip": "192.168.1.2",
+      "destination_port": 5353,
+      "destination_device": "eth1",
+      "socket_protocol": 0,
+      "sendto_flag": 0
+    },
+    "queue": {
+      "queue_size": 10,
+      "packet_size": 360
+    }
+  }
+  
