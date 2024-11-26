@@ -25,9 +25,26 @@ void PacketSend::GetPackets() {
     }
 }
 
-void PacketSend::SendPacket(const std::string& DestIP, const int& DestPort) {
+void PacketSend::BindSocketToInterface(const std::string& DeviceName) {
+    struct ifreq ifr;
+    std::memset(&ifr, 0, sizeof(ifr));
+    std::strncpy(ifr.ifr_name, DeviceName.c_str(), IFNAMSIZ - 1);
+
+    // Bind the socket to the specified network interface
+    if (setsockopt(Socket, SOL_SOCKET, SO_BINDTODEVICE, &ifr, sizeof(ifr)) < 0) {
+        std::cerr << "Failed to bind socket to interface: " << std::strerror(errno) << std::endl;
+    }
+}
+
+void PacketSend::SendPacket(const std::string& DestIP, const int& DestPort, const std::string& destDevice) {
     GetPackets();
-    sockaddr_in destAddr = {};
+
+    if(!destDevice.empty())
+        BindSocketToInterface(destDevice);
+
+
+    struct sockaddr_in destAddr = {};
+    std::memset(&destAddr,0, sizeof(destAddr));
     destAddr.sin_family = AF_INET; //Declaring IPv4
     destAddr.sin_port = htons(DestPort); //Conver port to network byte order
     if (inet_pton(AF_INET, DestIP.c_str(), &destAddr.sin_addr) <= 0) //Convert the dest ip to binary

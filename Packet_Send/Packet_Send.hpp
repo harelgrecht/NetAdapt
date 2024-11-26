@@ -18,7 +18,7 @@ class PacketSend {
         void GetPackets();
 
 
-        void SendPacket(const std::string& DestIP, const int& DestPort);
+        void SendPacket(const std::string& DestIP, const int& DestPort, const std::string& destDevice);
 
 };
 

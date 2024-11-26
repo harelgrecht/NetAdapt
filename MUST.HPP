@@ -16,8 +16,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-
-
 #include "GPIO_Handler/GPIO_Handler.hpp"
 #include "Packet_Capture/Packet_Capture.hpp"
 #include "Packet_Process/Packet_Process.hpp"
@@ -42,7 +40,6 @@
 #define PROMISC 1
 #define READ_TIMOUT 1000 // If no packets recived in 1000ms
 #define LOOP_COUNT -1
-
 
 #define RECIVER_IP "192.168.1.1"
 #define RECIVER_DEVICE "eth0"

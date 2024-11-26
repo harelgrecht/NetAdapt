@@ -25,7 +25,7 @@ int main() {
 
     PacketSend Send;
     std::thread SendingThread([&Send]() {
-        Send.SendPacket(DESTINATION_IP, DESTINATION_PORT,);
+        Send.SendPacket(DESTINATION_IP, DESTINATION_PORT, DESTINATION_DEVICE);
     });
 
     return 0;
