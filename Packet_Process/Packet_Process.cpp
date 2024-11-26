@@ -1,13 +1,16 @@
 #include "../MUST.hpp"
 
-
 void PacketProcess::GetPackets() {
     RawDataBuffer.clear();
-    uint8_t Packet[MAX_PACKET_SIZE];
+    uint8_t Packet[PACKET_SIZE];
     size_t PacketSize;
-    if (!PacketCapture::ReciveQueue.dequeue(Packet,PacketSize) || PacketSize != MAX_PACKET_SIZE) 
-        std::cerr << "Failed to fetch packet" << std::endl;
-    RawDataBuffer.insert(RawDataBuffer.end(), Packet, Packet + PacketSize);
+    for(int PacketIndex = 0; PacketIndex < PACKETS_TO_FETCH; PacketIndex++) {
+        if(!PacketCapture::ReciveQueue.dequeue(Packet, PacketSize)) {
+            std::cerr << "Failed to fetch packet" << std::endl;
+            continue;
+        }
+        RawDataBuffer.insert(RawDataBuffer.end(), Packet, Packet + PacketSize);
+    }
 }
 
 void PacketProcess::CompressPacket() {

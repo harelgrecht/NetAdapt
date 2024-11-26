@@ -36,7 +36,7 @@
 #define GPIO_DIRECTION_PATH "/sys/class/gpio/gpio" + std::to_string(PinNumber) + "/direction"
 #define GPIO_VALUE_PATH "/sys/class/gpio/gpio" + std::to_string(PinNumber) + "/value"
 
-#define MAX_PACKET_SIZE 630
+
 #define PROMISC 1
 #define READ_TIMOUT 1000 // If no packets recived in 1000ms
 #define LOOP_COUNT -1
