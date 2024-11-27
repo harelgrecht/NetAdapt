@@ -1,4 +1,4 @@
-#include "../MUST.HPP"
+#include "../Includes/Libraries.hpp"
 
 PacketCapture::PacketCapture(const std::string& device, std::string IpAddress) : Device(device), IpAddress(IpAddress) {
     SetIPAddress(Device,IpAddress);
@@ -22,7 +22,7 @@ bool PacketCapture::SetIPAddress(const std::string& device, const std::string& I
 }
 
 bool PacketCapture::OpenDevice() {
-    Handle = pcap_open_live(Device.c_str(), MAX_PACKET_SIZE, PROMISC, READ_TIMOUT, ErrBuffer);
+    Handle = pcap_open_live(Device.c_str(), PACKET_SIZE, PROMISC, READ_TIMOUT, ErrBuffer);
     if (Handle == nullptr){
         std::cerr << "Error opening Device" << ErrBuffer << std::endl;
         return false;
@@ -35,13 +35,13 @@ bool PacketCapture::SetFilter(const std::string& FilterString) {
         std::cerr << "Device is not open" << std::endl;
         return false;
     }
-    struct bpf_program filter;
-    if(pcap_compile(Handle, &filter, FilterString.c_str(),0, PCAP_NETMASK_UNKNOWN) == -1) {
+    struct bpf_program bpf_filter;
+    if(pcap_compile(Handle, &bpf_filter, FilterString.c_str(),0, PCAP_NETMASK_UNKNOWN) == -1) {
         std::cerr << "Failed to compile filter: " << pcap_geterr(Handle) << std::endl;
-        pcap_freecode(&filter);
+        pcap_freecode(&bpf_filter);
         return false; 
     }
-    pcap_freecode(&filter);
+    pcap_freecode(&bpf_filter);
     std::cout << "Filter applied: " << FilterString << std::endl;
     return true;
 }

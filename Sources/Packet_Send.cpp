@@ -1,4 +1,4 @@
-#include "../MUST.HPP"
+#include "../Includes/Libraries.hpp"
 
 PacketSend::PacketSend() {
     CreateSocket();
@@ -16,11 +16,11 @@ void PacketSend::CreateSocket() {
 
 void PacketSend::CloseSocket() {
     if (Socket >= 0)
-        closesocket(Socket);
+        close(Socket);
 }
 
 void PacketSend::GetPackets() {
-    if(PacketProcess::SendQueue.dequeue(Payload, PayloadLen) == false) {
+    if(PacketProcess::SendQueue.dequeue(PayloadData, PayloadLen) == false) {
         std::cout << "Failed to get a packet from the SendQueue" << std::endl;
     }
 }
@@ -38,16 +38,13 @@ void PacketSend::BindSocketToInterface(const std::string& DeviceName) {
 
 void PacketSend::SendPacket(const std::string& DestIP, const int& DestPort, const std::string& destDevice) {
     GetPackets();
-
     if(!destDevice.empty())
         BindSocketToInterface(destDevice);
-
-
     struct sockaddr_in destAddr = {};
     std::memset(&destAddr,0, sizeof(destAddr));
     destAddr.sin_family = AF_INET; //Declaring IPv4
     destAddr.sin_port = htons(DestPort); //Conver port to network byte order
     if (inet_pton(AF_INET, DestIP.c_str(), &destAddr.sin_addr) <= 0) //Convert the dest ip to binary
         std::cerr << "Invalid destionation IP address" << std::endl;
-    ssize_t SentBytes = sendto(Socket,PayloadData.c_str(), PayloadLen, SENDTO_FLAG, reinterpret_cast<sockaddr*>(&destAddr), sizeof(destAddr));
-    std::cout << "Packet sent to " << DestIP << ":" << DestPort << " (" << PayloadLen << " bytes)" << std::endl;}
+    ssize_t SentBytes = sendto(Socket, PayloadData, PayloadLen, SENDTO_FLAG, reinterpret_cast<sockaddr*>(&destAddr), sizeof(destAddr));
+    std::cout << "Packet sent to " << DestIP << ":" << DestPort << " (" << SentBytes << " bytes)" << std::endl;}

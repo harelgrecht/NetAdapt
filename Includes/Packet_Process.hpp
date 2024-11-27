@@ -1,11 +1,7 @@
 #ifndef PACKET_PROCESS_HPP
 #define PACKET_PROCESS_HPP
 
-#include "../MUST.HPP"
-
-#define PACKET_SIZE 630
-#define BUFFER_SIZE PACKET_SIZE * 5
-#define COMPRESSED_SIZE 360
+#include "Libraries.hpp"
 
 class PacketProcess {
     private:

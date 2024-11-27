@@ -1,4 +1,4 @@
-#include "../MUST.hpp"
+#include "../Includes/Libraries.hpp"
 
 void PacketProcess::GetPackets() {
     RawDataBuffer.clear();
@@ -20,6 +20,7 @@ void PacketProcess::CompressPacket() {
     uLongf CompressedSize = COMPRESSED_SIZE;
     int result = compress2(CompressedDataBuffer.data(), &CompressedSize, RawDataBuffer.data(), RawDataBuffer.size(), Z_BEST_COMPRESSION);
     if (result == Z_OK) {
+        std::cout << "Compressed len is: " << CompressedSize << std::endl;
         CompressedDataBuffer.resize(CompressedSize);
     }
 }

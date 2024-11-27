@@ -1,35 +1,44 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -std=c++11
-LDFLAGS = -lpcap
+CXXFLAGS = -Wall -Wextra -std=c++17 
+INCLUDES = -I./Includes
 
-# Directories
-SRC_DIRS = src GPIO_Handler Keep_Running Packet_Capture Packet_Process Packet_Send Queue
-INCLUDE_DIRS = $(addprefix -I, $(SRC_DIRS))
+# Libraries to link against
+LIBS = -lpcap -lz
 
-# Find source and header files dynamically
-SOURCES = $(wildcard $(addsuffix /*.cpp, $(SRC_DIRS)))
-HEADERS = $(wildcard $(addsuffix /*.hpp, $(SRC_DIRS)))
-OBJECTS = $(SOURCES:.cpp=.o)
+# Source and output directories
+SRC_DIR = Sources
+OBJ_DIR = obj
+BIN_DIR = bin
 
-# Target executable
-TARGET = MUST
+# Executable name (change to reflect "MUST")
+TARGET = $(BIN_DIR)/MUST
 
-# Default rule to build the target
-all: $(TARGET)
+# Source and object files
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 
-# Rule to build the target executable
-$(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+# Default target
+all: compile
 
-# Rule to compile each source file into an object file
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+# Compile target
+compile: $(TARGET)
 
-# Clean rule to remove compiled files
-clean:
-	rm -f $(TARGET) $(OBJECTS)
+# Link the executable
+$(TARGET): $(OBJS)
+	@mkdir -p $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET) $(LIBS)
 
-# Run the executable
+# Compile object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(OBJ_DIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+# Run target
 run: $(TARGET)
-	./$(TARGET)
+	@./$(TARGET)
+
+# Clean target
+clean:
+	@rm -rf $(OBJ_DIR) $(BIN_DIR)
+	@echo "Cleaned up build files."

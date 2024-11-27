@@ -1,6 +1,7 @@
 #ifndef GPIO_HANDLER_H
 #define GPIO_HANDLER_H
 
+#include "Libraries.hpp"
 
 class GPIO {
 

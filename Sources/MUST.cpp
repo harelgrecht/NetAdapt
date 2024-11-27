@@ -1,16 +1,19 @@
-#include "MUST.HPP"
+#include "../Includes/Libraries.hpp"
+
+bool KeepRunning = true;
+
+void SignalHandler(int signal) {
+    if (signal == SIGINT) 
+        KeepRunning = false;
+}
 
 int main() {
-
-    GPIO UF1(GPIO1, GPIO_OUT);
-    GPIO UF2(GPIO2, GPIO_OUT);
-
-    UF1.SetValue(1);
-    UF2.SetValue(1);
+    
+    std::signal(SIGINT, SignalHandler);
 
     PacketCapture Capture(RECIVER_DEVICE, RECIVER_IP);
-    std::thread CapturingThread([&Capture](){
-        if(!Capture.StartCapture(filter)) {
+    std::thread CapturingThread([&Capture] () {
+        if(!Capture.StartCapture(ETH_FILTER)) {
             std::cerr << "Failed to start capturing packets" << std::endl;
             return -1;
         }
@@ -28,5 +31,9 @@ int main() {
         Send.SendPacket(DESTINATION_IP, DESTINATION_PORT, DESTINATION_DEVICE);
     });
 
+
+    CapturingThread.join();
+    ProccesingThread.join();
+    SendingThread.join();
     return 0;
 }
