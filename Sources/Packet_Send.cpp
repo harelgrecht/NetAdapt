@@ -1,17 +1,24 @@
 #include "../Includes/Libraries.hpp"
 
-PacketSend::PacketSend() {
-    CreateSocket();
-};
+PacketSend::PacketSend(const std::string& Device) : ETHDevice(Device), PayloadData(nullptr), PayloadLen(0) {
+    PayloadData = new uint8_t;
+    CreateSocket(ETHDevice.c_str());
+}
 
 PacketSend::~PacketSend() {
     CloseSocket();
+    delete[] PayloadData;
 }
 
-void PacketSend::CreateSocket() {
+void PacketSend::CreateSocket(const std::string& Device) {
     Socket = socket(AF_INET, SOCK_DGRAM, SOCKET_PROTOCTOL);
     if (Socket < 0)
         throw std::runtime_error("Failed to create socket: " + std::string(std::strerror(errno)));
+
+    if (setsockopt(Socket, SOL_SOCKET, SO_BINDTODEVICE, Device.c_str(), Device.length() + 1) < 0) {
+        close(Socket);
+        throw std::runtime_error("Faild to bind socket: " + std::string(std::strerror(errno)));
+    }
 }
 
 void PacketSend::CloseSocket() {
@@ -19,32 +26,45 @@ void PacketSend::CloseSocket() {
         close(Socket);
 }
 
-void PacketSend::GetPackets() {
+void PacketSend::CreateIPHeader(const std::string& SourceIP, const std::string& DestIP, size_t PayloadLen) {
+    iph_send->ihl = 5;
+    iph_send->version = 4;
+    iph_send->tos = 0;
+    iph_send->tot_len = sizeof(struct iphdr) + sizeof(struct udphdr) + PayloadLen;
+    iph_send->id = htons(PacketID++);
+    iph_send->frag_off = 0;
+    iph_send->ttl = 255;
+    iph_send->protocol = IPPROTO_UDP;
+    iph_send->check = 0; // Placeholder, not calculated in this implementation
+    iph_send->saddr = inet_addr(SourceIP.c_str());
+    iph_send->daddr = inet_addr(DestIP.c_str());
+}
+
+
+void PacketSend::CreateUDPHeader(int SourcePort, int DestPort, size_t PayloadLen) {
+    UDPHeader->source = htons(SourcePort);
+    UDPHeader->dest = htons(DestPort);
+    UDPHeader->len = htons(sizeof(struct udphdr) + PayloadLen);
+}
+
+void PacketSend::CreatePacket(const std::string& SourceIP, const std::string& DestIP, int SourcePort, int DestPort) {
+    memcpy(ETHPacket + sizeof(struct iphdr) + sizeof(struct udphdr), PayloadData, PayloadLen);
+    CreateIPHeader(SourceIP, DestIP, PayloadLen);
+    CreateUDPHeader(SourcePort, DestPort, PayloadLen);
+
+    memset(&DestInfo,0 ,sizeof(DestInfo));
+    DestInfo.sin_family = AF_INET;
+    DestInfo.sin_port = htons(DestPort);
+    DestInfo.sin_addr.s_addr = inet_addr(DestIP.c_str());
+}
+
+void PacketSend::FetchPacketFromQueue() {
     if(PacketProcess::SendQueue.dequeue(PayloadData, PayloadLen) == false) {
         std::cout << "Failed to get a packet from the SendQueue" << std::endl;
     }
 }
 
-void PacketSend::BindSocketToInterface(const std::string& DeviceName) {
-    struct ifreq ifr;
-    std::memset(&ifr, 0, sizeof(ifr));
-    std::strncpy(ifr.ifr_name, DeviceName.c_str(), IFNAMSIZ - 1);
-
-    // Bind the socket to the specified network interface
-    if (setsockopt(Socket, SOL_SOCKET, SO_BINDTODEVICE, &ifr, sizeof(ifr)) < 0) {
-        std::cerr << "Failed to bind socket to interface: " << std::strerror(errno) << std::endl;
-    }
+void PacketSend::SendPacket() {
+    if(sendto(Socket, ETHPacket, iph_send -> tot_len, 0, (struct sockaddr *)&DestInfo, sizeof(DestInfo)) < 0)
+        std::cerr << "Failed sending the packet: " << PacketID << " Error: " << std::strerror(errno) << std::endl;
 }
-
-void PacketSend::SendPacket(const std::string& DestIP, const int& DestPort, const std::string& destDevice) {
-    GetPackets();
-    if(!destDevice.empty())
-        BindSocketToInterface(destDevice);
-    struct sockaddr_in destAddr = {};
-    std::memset(&destAddr,0, sizeof(destAddr));
-    destAddr.sin_family = AF_INET; //Declaring IPv4
-    destAddr.sin_port = htons(DestPort); //Conver port to network byte order
-    if (inet_pton(AF_INET, DestIP.c_str(), &destAddr.sin_addr) <= 0) //Convert the dest ip to binary
-        std::cerr << "Invalid destionation IP address" << std::endl;
-    ssize_t SentBytes = sendto(Socket, PayloadData, PayloadLen, SENDTO_FLAG, reinterpret_cast<sockaddr*>(&destAddr), sizeof(destAddr));
-    std::cout << "Packet sent to " << DestIP << ":" << DestPort << " (" << SentBytes << " bytes)" << std::endl;}

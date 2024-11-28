@@ -1,5 +1,7 @@
 #include "../Includes/Libraries.hpp"
 
+Queue PacketCapture::ReciveQueue;
+
 PacketCapture::PacketCapture(const std::string& device, std::string IpAddress) : Device(device), IpAddress(IpAddress) {
     SetIPAddress(Device,IpAddress);
 }

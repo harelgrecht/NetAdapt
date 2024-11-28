@@ -20,6 +20,8 @@
 #include <arpa/inet.h>
 #include <net/if.h>
 #include <sys/socket.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
 
 #include "GPIO_Handler.hpp"
 #include "Packet_Capture.hpp"

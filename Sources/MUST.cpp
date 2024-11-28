@@ -11,7 +11,7 @@ int main() {
     
     std::signal(SIGINT, SignalHandler);
 
-    PacketCapture Capture(RECIVER_DEVICE, RECIVER_IP);
+    PacketCapture Capture(SOURCE_DEVICE, SOURCE_IP);
     std::thread CapturingThread([&Capture] () {
         if(!Capture.StartCapture(ETH_FILTER)) {
             std::cerr << "Failed to start capturing packets" << std::endl;
@@ -26,9 +26,11 @@ int main() {
         }
     });
 
-    PacketSend Send;
+    PacketSend Send(DESTINATION_DEVICE);
     std::thread SendingThread([&Send]() {
-        Send.SendPacket(DESTINATION_IP, DESTINATION_PORT, DESTINATION_DEVICE);
+        Send.FetchPacketFromQueue();
+        Send.CreatePacket(SOURCE_IP, DESTINATION_IP, SOURCE_PORT, DESTINATION_PORT);
+        Send.SendPacket();
     });
 
 

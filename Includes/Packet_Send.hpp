@@ -5,21 +5,31 @@
 
 class PacketSend {
     private:
+        std::string ETHDevice;
         int Socket;
         uint8_t *PayloadData;
         size_t PayloadLen;
-        void CreateSocket();
+        char ETHPacket[4096];
+        struct sockaddr_in DestInfo;
+        struct iphdr *iph_send = (struct iphdr *)ETHPacket;
+        struct udphdr *UDPHeader = (struct udphdr *)(ETHPacket + sizeof(struct iphdr));
+        int PacketID = 0;
+
+        void CreateSocket(const std::string& Device);
         void CloseSocket();
-        
+
+
+        void CreateIPHeader(const std::string& SourceIP, const std::string& DestIP, size_t PayloadLen);
+        void CreateUDPHeader(int SourcePort, int DestPort, size_t PayloadLen);
+
     public:
-        PacketSend();
+        PacketSend(const std::string& ETHDevice);
         ~PacketSend();
-        void GetPackets();
+        void FetchPacketFromQueue();
 
-        void BindSocketToInterface(const std::string &DeviceName);
+        void CreatePacket(const std::string& SourceIP, const std::string& DestIP, int SourcePort, int DestPort);
 
-        void SendPacket(const std::string& DestIP, const int& DestPort, const std::string& destDevice);
-
+        void SendPacket();
 };
 
 

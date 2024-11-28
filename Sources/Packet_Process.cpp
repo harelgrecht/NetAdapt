@@ -1,5 +1,7 @@
 #include "../Includes/Libraries.hpp"
 
+Queue PacketProcess::SendQueue;
+
 void PacketProcess::GetPackets() {
     RawDataBuffer.clear();
     uint8_t Packet[PACKET_SIZE];
@@ -15,8 +17,9 @@ void PacketProcess::GetPackets() {
 
 void PacketProcess::CompressPacket() {
     if (RawDataBuffer.empty()) 
-        std::cerr << "BeforeCompressSize is empty" << std::endl;
-    CompressedDataBuffer.resize(COMPRESSED_SIZE);
+        std::cerr << "RawDataBuffer is empty" << std::endl;
+    CompressedDataBuffer.resize(RawDataBuffer.size() + RawDataBuffer.size() / 10 + 12); //  10% overhead + zlib extra space
+
     uLongf CompressedSize = COMPRESSED_SIZE;
     int result = compress2(CompressedDataBuffer.data(), &CompressedSize, RawDataBuffer.data(), RawDataBuffer.size(), Z_BEST_COMPRESSION);
     if (result == Z_OK) {
@@ -34,7 +37,6 @@ void PacketProcess::StorePackets() {
             std::cerr << "Send Queue is full" << std::endl;
         offset += Chunk;
     }
-
 }
 
 void PacketProcess::ProcessStart() {
