@@ -2,8 +2,10 @@
 #ifndef GLOBAL_DEFINES_H
 #define GLOBAL_DEFINES_H
 
-#define QUEUE_SIZE 100
-#define PACKET_SIZE 360 
+#define QUEUE_SIZE 100 // packets in queue
+#define PACKET_SIZE 360
+
+
 #define COMPRESSED_SIZE 360
 #define GPIO1 506
 #define GPIO2 507

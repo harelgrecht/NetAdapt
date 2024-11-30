@@ -65,11 +65,13 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
 
 /* Store the packets in the Queue without udp header, just raw data (payload) */
 void PacketCapture::RecivePacketHandler(uint8_t* GlobalData, const struct pcap_pkthdr* PacketHeader, const uint8_t* PacketData) {
+    std::cout << "Packet captured with length: " << PacketHeader->len << std::endl;
     const uint8_t *PayloadData = PacketData + UDP_HEADER_SIZE;
     const size_t PayloadLen = PacketHeader -> len - 8; 
-    if(ReciveQueue.enqueue(PayloadData, PayloadLen) == true) 
-        std::cout << "Packet in legnth: " << PacketHeader -> len << "Sent to the queue" << std::endl;
+    if (ReciveQueue.enqueue(PayloadData, PayloadLen)) 
+        std::cout << "Packet added to queue, length: " << PayloadLen << std::endl;
     else
-        std::cout << "Failed to send the packet to the queue" << std::endl;
+        std::cerr << "Failed to enqueue packet, queue might be full." << std::endl;
+
 }
 

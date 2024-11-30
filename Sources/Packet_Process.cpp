@@ -8,7 +8,7 @@ void PacketProcess::GetPackets() {
     size_t PacketSize;
     for(int PacketIndex = 0; PacketIndex < PACKETS_TO_FETCH; PacketIndex++) {
         if(!PacketCapture::ReciveQueue.dequeue(Packet, PacketSize)) {
-            std::cerr << "Failed to fetch packet" << std::endl;
+            std::cerr << "Failed to fetch packet from ReciveQueue" << std::endl;
             continue;
         }
         RawDataBuffer.insert(RawDataBuffer.end(), Packet, Packet + PacketSize);
@@ -19,7 +19,6 @@ void PacketProcess::CompressPacket() {
     if (RawDataBuffer.empty()) 
         std::cerr << "RawDataBuffer is empty" << std::endl;
     CompressedDataBuffer.resize(RawDataBuffer.size() + RawDataBuffer.size() / 10 + 12); //  10% overhead + zlib extra space
-
     uLongf CompressedSize = COMPRESSED_SIZE;
     int result = compress2(CompressedDataBuffer.data(), &CompressedSize, RawDataBuffer.data(), RawDataBuffer.size(), Z_BEST_COMPRESSION);
     if (result == Z_OK) {
