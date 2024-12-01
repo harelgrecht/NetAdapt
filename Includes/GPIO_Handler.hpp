@@ -16,6 +16,7 @@ public:
 	~GPIO();
 	void SetDirection(const std::string& direction);
 	void SetValue(int value);
+	void BlinkLed();
 	void WriteToFile(const std::string& FilePath, const std::string& Data);
 };
 

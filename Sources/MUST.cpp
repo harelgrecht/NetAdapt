@@ -11,6 +11,13 @@ int main() {
     
     std::signal(SIGINT, SignalHandler);
 
+    ETHStatus Status;
+    std::thread StatusThread([&Status]() {
+        while(KeepRunning)
+            Status.StartEthStatus();
+    });
+
+
     PacketCapture Capture(SOURCE_DEVICE, SOURCE_IP);
     std::thread CapturingThread([&Capture] () {
         if(!Capture.StartCapture(ETH_FILTER)) {

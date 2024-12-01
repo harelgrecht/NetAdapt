@@ -40,5 +40,9 @@
 
 #define SENDTO_FLAG 0
 
+#define ETH_DEVICE_COUNT 2
+
+bool PacketRecived = false;
+
 
 #endif

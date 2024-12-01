@@ -22,6 +22,11 @@
 #include <sys/socket.h>
 #include <netinet/ip.h>
 #include <netinet/udp.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <linux/if.h>
+
+
 
 #include "GPIO_Handler.hpp"
 #include "Packet_Capture.hpp"
@@ -29,5 +34,6 @@
 #include "Packet_Send.hpp"
 #include "Queue.hpp"
 #include "Global_Defines.hpp"
+#include "ETH_Status.hpp"
 
 #endif
