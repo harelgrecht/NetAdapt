@@ -40,7 +40,7 @@ int main() {
         Send.SendPacket();
     });
 
-
+    StatusThread.join();
     CapturingThread.join();
     ProccesingThread.join();
     SendingThread.join();
