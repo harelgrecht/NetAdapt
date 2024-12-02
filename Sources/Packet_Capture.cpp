@@ -1,4 +1,9 @@
-#include "../Includes/Libraries.hpp"
+#include "../Includes/Global_Defines.hpp"
+#include "../Includes/Packet_Capture.hpp"
+
+
+#include <iostream>
+#include <stdexcept>
 
 Queue PacketCapture::ReciveQueue;
 
@@ -24,7 +29,7 @@ bool PacketCapture::SetIPAddress(const std::string& device, const std::string& I
 }
 
 bool PacketCapture::OpenDevice() {
-    Handle = pcap_open_live(Device.c_str(), PACKET_SIZE, PROMISC, READ_TIMOUT, ErrBuffer);
+    Handle = pcap_open_live(Device.c_str(), PACKET_SIZE, PROMISC, READ_TIMEOUT, ErrBuffer);
     if (Handle == nullptr){
         std::cerr << "Error opening Device" << ErrBuffer << std::endl;
         return false;
@@ -52,7 +57,7 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
     if  (OpenDevice() == false) {
         return false;
     }
-    if (!SetFilter(FilterString)) {
+    if (SetFilter(FilterString) == false) {
         return false;
     }
     std::cout << "Starting capturing ETH packets on device " << Device << std::endl;

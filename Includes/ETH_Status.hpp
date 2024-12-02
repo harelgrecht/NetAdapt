@@ -1,9 +1,10 @@
-#pragma once
 #ifndef ETH_STATUS_HPP
 #define ETH_STATUS_HPP
 
-#include "Libraries.hpp"
 
+#include <string>
+#include <cstdint>
+#include <array>
 
 class ETHStatus {
     public:
@@ -17,10 +18,6 @@ class ETHStatus {
         
         static const std::string InterfaceMap[ETH_DEVICE_COUNT];
         uint32_t PreviousRxBytes[ETH_DEVICE_COUNT];
-        GPIO LinkStatusLed;
-        GPIO PacketTrafficStatusLed;
 };
-
-
 
 #endif

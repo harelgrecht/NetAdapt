@@ -1,44 +1,40 @@
-# Compiler and flags
+# Compiler and Flags
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 
-INCLUDES = -I./Includes
+CXXFLAGS = -Wall -Wextra -std=c++17 -I./Includes
 
-# Libraries to link against
-LIBS = -lpcap -lz
+# Directories
+SRCDIR = Sources
+INCDIR = Includes
+OBJDIR = obj
+BINDIR = bin
 
-# Source and output directories
-SRC_DIR = Sources
-OBJ_DIR = obj
-BIN_DIR = bin
+# Source Files
+SRCS = $(wildcard $(SRCDIR)/*.cpp)
+# Object Files
+OBJS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
+# Target Executable
+TARGET = $(BINDIR)/MUST
 
-# Executable name (change to reflect "MUST")
-TARGET = $(BIN_DIR)/MUST
+# Ensure directories exist
+$(shell mkdir -p $(OBJDIR) $(BINDIR))
 
-# Source and object files
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
-OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
+# Default Target
+all: $(TARGET)
 
-# Default target
-all: compile
-
-# Compile target
-compile: $(TARGET)
-
-# Link the executable
+# Linking Target Executable
 $(TARGET): $(OBJS)
-	@mkdir -p $(BIN_DIR)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET) $(LIBS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ -lpcap -lz
 
-# Compile object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(OBJ_DIR)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+# Compile Each Source File into Object File
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Run target
-run: $(TARGET)
-	@./$(TARGET)
-
-# Clean target
+# Clean Up
 clean:
-	@rm -rf $(OBJ_DIR) $(BIN_DIR)
-	@echo "Cleaned up build files."
+	rm -rf $(OBJDIR)/*.o $(TARGET)
+
+run:
+	sudo ./bin/MUST
+
+# Phony Targets
+.PHONY: all clean

@@ -1,7 +1,13 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
-#include "Libraries.hpp"
+#include "../Includes/Global_Defines.hpp"
+
+
+#include <vector>
+#include <mutex>
+#include <cstdint>
+#include <algorithm>
 
 class Queue {
 private:

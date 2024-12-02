@@ -1,4 +1,6 @@
-#include "../Includes/Libraries.hpp"
+#include "../Includes/GPIO_Handler.hpp"
+#include "../Includes/Global_Defines.hpp"
+
 
 GPIO::GPIO(int pin, const std::string& direction) : PinNumber(pin), Direction(direction) {
 	ExportGPIO(pin);
@@ -36,8 +38,10 @@ void GPIO::BlinkLed() {
 
 void GPIO::WriteToFile(const std::string& FilePath, const std::string& Data) {
 	std::ofstream file(FilePath);
-	if(!file.is_open() || file.fail())
+	if(!file.is_open() || file.fail()) {
 		std::cerr << "Failed to open the file" + FilePath << std::endl;
+		return;
+	}
 	file << Data;
 }
 

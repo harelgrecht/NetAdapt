@@ -1,6 +1,23 @@
-#include "../Includes/Libraries.hpp"
+#include "../Includes/Global_Defines.hpp"
+#include "../Includes/ETH_Status.hpp"
+#include "../Includes/GPIO_Handler.hpp"
 
-ETHStatus::ETHStatus() : LinkStatusLed(GPIO1, GPIO_OUT), PacketTrafficStatusLed(GPIO2, GPIO_OUT){
+#include <cstring>
+#include <sys/ioctl.h>
+#include <linux/if.h>
+#include <unistd.h>
+#include <stdexcept>
+#include <iostream>
+
+
+GPIO LinkStatusLed(GPIO1, GPIO_OUT);
+GPIO PacketTrafficStatusLed(GPIO2, GPIO_OUT);
+bool PacketRecived = false;
+
+const std::string ETHStatus::InterfaceMap[ETH_DEVICE_COUNT] = {"eth0", "eth1"};
+
+
+ETHStatus::ETHStatus() {
     std::fill(std::begin(PreviousRxBytes), std::end(PreviousRxBytes), 0);
 };
 
@@ -16,7 +33,7 @@ void ETHStatus::UpdateEthStatus() {
                     PacketTrafficStatusLed.BlinkLed();
                     PacketRecived = false;
                 } else {
-                    PacketTrafficStatusLed.SetValue(0);
+                    PacketTrafficStatusLed.SetValue(GPIO_OFF);
                 }
         } else {
             LinkStatusLed.SetValue(GPIO_OFF);
@@ -26,7 +43,7 @@ void ETHStatus::UpdateEthStatus() {
 
 
 bool ETHStatus::IsEthDeviceRunning(const std::string& DeviceName) {
-    int socketfd = socket(AF_INET, SOCK_DGRAM, SOCKET_PROTOCTOL);
+    int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socketfd < 0){
         perror("socket");
         return false;

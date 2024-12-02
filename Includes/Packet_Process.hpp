@@ -1,7 +1,14 @@
 #ifndef PACKET_PROCESS_HPP
 #define PACKET_PROCESS_HPP
 
-#include "Libraries.hpp"
+#include "Queue.hpp"
+
+#include <vector>
+#include <cstdint>
+#include <iostream>
+#include <algorithm>
+#include <zlib.h>
+
 
 class PacketProcess {
     private:

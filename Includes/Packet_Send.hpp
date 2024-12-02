@@ -1,7 +1,19 @@
 #ifndef PACKET_SEND_HPP
 #define PACKET_SEND_HPP
 
-#include "Libraries.hpp"
+#include "Packet_Process.hpp"
+
+#include <string>
+#include <cstdint>
+#include <cstring>
+#include <stdexcept>
+#include <arpa/inet.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <iostream>
+
 
 class PacketSend {
     private:

@@ -1,5 +1,10 @@
-#include "../Includes/Libraries.hpp"
+#include "../Includes/Packet_Process.hpp"
+#include "../Includes/Packet_Capture.hpp"
+#include "../Includes/Global_Defines.hpp"
 
+#include <iostream>
+#include <algorithm>
+#include <zlib.h>
 Queue PacketProcess::SendQueue;
 
 void PacketProcess::GetPackets() {

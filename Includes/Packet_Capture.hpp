@@ -1,7 +1,13 @@
 #ifndef PACKET_CAPTURE_HPP
 #define PACKET_CAPTURE_HPP
 
-#include "Libraries.hpp"
+#include "Queue.hpp"
+
+#include <string>
+#include <iostream>
+#include <pcap.h>
+#include <vector>
+#include <cstdint>
 
 
 class PacketCapture {

@@ -1,7 +1,11 @@
-#ifndef GPIO_HANDLER_H
-#define GPIO_HANDLER_H
+#ifndef GPIO_HANDLER_HPP
+#define GPIO_HANDLER_HPP
 
-#include "Libraries.hpp"
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <chrono>
+#include <thread>
 
 class GPIO {
 

@@ -5,9 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/msys64/mingw64/include",
-                "${workspaceFolder}/Packet_Capture",
                 "C:/msys64/mingw64/include/pcap",
-                "C:/msys64/ucrt64/include"
+                "C:/msys64/ucrt64/include",
+                "${workspaceFolder}/Includes"
             ],
             "defines": [
                 "_DEBUG",

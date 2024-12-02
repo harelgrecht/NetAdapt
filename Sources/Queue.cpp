@@ -1,4 +1,4 @@
-#include "../Includes/Libraries.hpp"
+#include "../Includes/Queue.hpp"
 
 Queue::Queue() : Front(0), Rear(0), CurrentlyPacketsCount(0), Packets(QUEUE_SIZE) {};
 
@@ -28,8 +28,8 @@ bool Queue::enqueue(const uint8_t* data, size_t size) {
     PacketSizes[Rear] = size; 
     Rear = (Rear + 1) % QUEUE_SIZE; 
     CurrentlyPacketsCount++;
-    return true;
     Mutex.unlock();
+    return true;
 }
 
 bool Queue::dequeue(uint8_t* data, size_t& size) {
@@ -43,8 +43,8 @@ bool Queue::dequeue(uint8_t* data, size_t& size) {
     Packets[Front].clear();
     Front = (Front + 1) % QUEUE_SIZE;
     CurrentlyPacketsCount--;
-    return true;
     Mutex.unlock();
+    return true;
 }
 
 int Queue::PacketsCount() {

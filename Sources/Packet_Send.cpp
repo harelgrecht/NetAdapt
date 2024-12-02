@@ -1,7 +1,14 @@
-#include "../Includes/Libraries.hpp"
+#include "../Includes/Packet_Send.hpp"
+#include "../Includes/Global_Defines.hpp"
+
+#include <cstring>
+#include <iostream>
+#include <stdexcept>
+#include <unistd.h>
+#include <arpa/inet.h>
 
 PacketSend::PacketSend(const std::string& Device) : ETHDevice(Device), PayloadData(nullptr), PayloadLen(0) {
-    PayloadData = new uint8_t;
+    PayloadData = new uint8_t[PACKET_SIZE];
     CreateSocket(ETHDevice.c_str());
 }
 
@@ -11,7 +18,7 @@ PacketSend::~PacketSend() {
 }
 
 void PacketSend::CreateSocket(const std::string& Device) {
-    Socket = socket(AF_INET, SOCK_DGRAM, SOCKET_PROTOCTOL);
+    Socket = socket(AF_INET, SOCK_DGRAM, 0);
     if (Socket < 0)
         throw std::runtime_error("Failed to create socket: " + std::string(std::strerror(errno)));
 
