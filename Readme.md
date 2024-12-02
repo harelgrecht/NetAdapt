@@ -68,8 +68,9 @@ The application users a multi-threaded approach to handle packets efficiently:
     ├── Readme.md
     ```
     2.5. **Block Diagram**:\
-        ![Block Diagram](./FlowChart.png)
-
+        ![Block Diagram](./Drawings/BlockDiagram.png)\
+    2.6. **Network Diagram**:\
+        ![Network Diagram](./Drawings/NetworkDiagram.png)
 
 ### Author
 - Harel Grecht
