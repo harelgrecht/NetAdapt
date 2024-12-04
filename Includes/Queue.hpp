@@ -12,7 +12,7 @@
 class Queue {
 private:
     std::vector<std::vector<uint8_t>> Packets; // using vector of vectors for storing packets
-    size_t PacketSizes[QUEUE_SIZE]; 
+    size_t PacketSizes[MAX_QUEUE_CAPACITY]; 
     int Front;               
     int Rear;                 
     int CurrentlyPacketsCount;

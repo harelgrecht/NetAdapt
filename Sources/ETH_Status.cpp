@@ -10,16 +10,14 @@
 #include <iostream>
 
 
-GPIO LinkStatusLed(GPIO1, GPIO_OUT);
-GPIO PacketTrafficStatusLed(GPIO2, GPIO_OUT);
+GPIO LinkStatusLed(LINK_STATUS_LED_PIN, GPIO_OUT);
+GPIO PacketTrafficStatusLed(PACKET_TRAFFIC_LED_PIN, GPIO_OUT);
 bool PacketRecived = false;
 
 const std::string ETHStatus::InterfaceMap[ETH_DEVICE_COUNT] = {"eth0", "eth1"};
 
 
-ETHStatus::ETHStatus() {
-    std::fill(std::begin(PreviousRxBytes), std::end(PreviousRxBytes), 0);
-};
+ETHStatus::ETHStatus() {};
 
 void ETHStatus::StartEthStatus() {
     UpdateEthStatus();
@@ -48,10 +46,14 @@ bool ETHStatus::IsEthDeviceRunning(const std::string& DeviceName) {
         perror("socket");
         return false;
     }
-    struct ifreq ifr;
-    strncpy(ifr.ifr_name, DeviceName.c_str(), IFNAMSIZ - 1);
-    ioctl(socketfd, SIOCGIFFLAGS, &ifr);
-
+    struct ifreq ifr = {};
+    strncpy(ifr.ifr_name, DeviceName.c_str(), MAX_INTERFACE_NAME_LENGTH);
+    if(ioctl(socketfd, SIOCGIFFLAGS, &ifr) < 0) {
+        perror("ioctl");
+        close(socketfd);
+        return false;
+    }
+    
     close(socketfd);
     return (ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING);
     

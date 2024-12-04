@@ -30,7 +30,7 @@ class PacketCapture {
         char ErrBuffer[PCAP_ERRBUF_SIZE];
         std::string Device;
         std::string IpAddress;
-        pcap_t* Handle;
+        pcap_t* Handle; //TODO: change name
 
 };
 

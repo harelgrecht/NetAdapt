@@ -29,9 +29,9 @@ GPIO::~GPIO() {
 }
 
 void GPIO::BlinkLed() {
-	SetValue(1);
-	std::this_thread::sleep_for(std::chrono::milliseconds(250));
-	SetValue(0);
+	SetValue(GPIO_ON);
+	std::this_thread::sleep_for(std::chrono::milliseconds(LED_BLINK_DURATION_MS));
+	SetValue(GPIO_OFF);
 }
 
 

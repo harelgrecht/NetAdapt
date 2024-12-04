@@ -29,7 +29,7 @@ bool PacketCapture::SetIPAddress(const std::string& device, const std::string& I
 }
 
 bool PacketCapture::OpenDevice() {
-    Handle = pcap_open_live(Device.c_str(), PACKET_SIZE, PROMISC, READ_TIMEOUT, ErrBuffer);
+    Handle = pcap_open_live(Device.c_str(), PACKET_SIZE, PROMISC, CAPTURE_READ_TIMEOUT_MS, ErrBuffer);
     if (Handle == nullptr){
         std::cerr << "Error opening Device" << ErrBuffer << std::endl;
         return false;
@@ -48,6 +48,13 @@ bool PacketCapture::SetFilter(const std::string& FilterString) {
         pcap_freecode(&bpf_filter);
         return false; 
     }
+
+    if (pcap_setfilter(Handle, &bpf_filter) == -1) {
+        std::cerr << "Failed to set filter: " << pcap_geterr(Handle) << std::endl;
+        pcap_freecode(&bpf_filter);
+        return false;
+    }
+        
     pcap_freecode(&bpf_filter);
     std::cout << "Filter applied: " << FilterString << std::endl;
     return true;
@@ -61,7 +68,7 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
         return false;
     }
     std::cout << "Starting capturing ETH packets on device " << Device << std::endl;
-    if(pcap_loop(Handle, LOOP_COUNT, RecivePacketHandler, reinterpret_cast<uint8_t*>(this)) < 0) {
+    if(pcap_loop(Handle, CAPTURE_READ_TIMEOUT_MS, RecivePacketHandler, reinterpret_cast<uint8_t*>(this)) < 0) {
         std::cerr << "Error capturing packets: " << pcap_geterr(Handle) << std::endl;
         return false;
     }
@@ -72,7 +79,7 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
 void PacketCapture::RecivePacketHandler(uint8_t* GlobalData, const struct pcap_pkthdr* PacketHeader, const uint8_t* PacketData) {
     PacketRecived = true;
     std::cout << "Packet captured with length: " << PacketHeader->len << std::endl;
-    const uint8_t *PayloadData = PacketData + UDP_HEADER_SIZE;
+    const uint8_t *PayloadData = PacketData + UDP_HEADER_LENGTH;
     const size_t PayloadLen = PacketHeader -> len - 8; 
     if (ReciveQueue.enqueue(PayloadData, PayloadLen)) 
         std::cout << "Packet added to queue, length: " << PayloadLen << std::endl;

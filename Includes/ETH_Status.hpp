@@ -17,7 +17,6 @@ class ETHStatus {
 
         
         static const std::string InterfaceMap[ETH_DEVICE_COUNT];
-        uint32_t PreviousRxBytes[ETH_DEVICE_COUNT];
 };
 
 #endif

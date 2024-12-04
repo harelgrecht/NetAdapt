@@ -34,15 +34,15 @@ void PacketSend::CloseSocket() {
 }
 
 void PacketSend::CreateIPHeader(const std::string& SourceIP, const std::string& DestIP, size_t PayloadLen) {
-    iph_send->ihl = 5;
-    iph_send->version = 4;
+    iph_send->ihl = IP_HEADER_LENGTH_UNITS;
+    iph_send->version = IP_VERSION;
     iph_send->tos = 0;
     iph_send->tot_len = sizeof(struct iphdr) + sizeof(struct udphdr) + PayloadLen;
     iph_send->id = htons(PacketID++);
     iph_send->frag_off = 0;
-    iph_send->ttl = 255;
+    iph_send->ttl = DEFAULT_TTL_VALUE;
     iph_send->protocol = IPPROTO_UDP;
-    iph_send->check = 0; // Placeholder, not calculated in this implementation
+    iph_send->check = 0; 
     iph_send->saddr = inet_addr(SourceIP.c_str());
     iph_send->daddr = inet_addr(DestIP.c_str());
 }

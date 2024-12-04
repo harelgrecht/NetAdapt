@@ -1,10 +1,10 @@
 #include "../Includes/Queue.hpp"
 
-Queue::Queue() : Front(0), Rear(0), CurrentlyPacketsCount(0), Packets(QUEUE_SIZE) {};
+Queue::Queue() : Front(0), Rear(0), CurrentlyPacketsCount(0), Packets(MAX_QUEUE_CAPACITY) {};
 
 bool Queue::isFull() {
     Mutex.lock();
-    bool result = CurrentlyPacketsCount == QUEUE_SIZE;
+    bool result = CurrentlyPacketsCount == MAX_QUEUE_CAPACITY;
     Mutex.unlock();
     return result;
 }
@@ -26,7 +26,7 @@ bool Queue::enqueue(const uint8_t* data, size_t size) {
     }
     Packets[Rear] = std::vector<uint8_t>(data, data+ size);
     PacketSizes[Rear] = size; 
-    Rear = (Rear + 1) % QUEUE_SIZE; 
+    Rear = (Rear + 1) % MAX_QUEUE_CAPACITY; 
     CurrentlyPacketsCount++;
     Mutex.unlock();
     return true;
@@ -41,7 +41,7 @@ bool Queue::dequeue(uint8_t* data, size_t& size) {
     size = PacketSizes[Front];
     std::copy(Packets[Front].begin(), Packets[Front].end(), data);
     Packets[Front].clear();
-    Front = (Front + 1) % QUEUE_SIZE;
+    Front = (Front + 1) % MAX_QUEUE_CAPACITY;
     CurrentlyPacketsCount--;
     Mutex.unlock();
     return true;

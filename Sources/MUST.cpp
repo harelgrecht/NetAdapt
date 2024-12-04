@@ -25,7 +25,7 @@ int main() {
             Status.StartEthStatus();
     });
 
-
+ //TODO: Capture and Send rename
     PacketCapture Capture(SOURCE_DEVICE, SOURCE_IP);
     std::thread CapturingThread([&Capture] () {
         if(!Capture.StartCapture(ETH_FILTER)) {
@@ -41,6 +41,7 @@ int main() {
         }
     });
 
+//TODO: encapsule that funcs to one func
     PacketSend Send(DESTINATION_DEVICE);
     std::thread SendingThread([&Send]() {
         Send.FetchPacketFromQueue();
