@@ -26,7 +26,7 @@ extern bool PacketRecived;
 
 //Packet_Capture Module
 #define PACKET_SIZE 360
-#define MAX_COMPRESSED_PACKET_SIZE(PACKET_SIZE*5)
+#define MAX_COMPRESSED_PACKET_SIZE (PACKET_SIZE * 5)
 #define UDP_HEADER_LENGTH 8
 #define PROMISC 1
 #define CAPTURE_READ_TIMEOUT_MS 1000
