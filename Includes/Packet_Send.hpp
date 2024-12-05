@@ -41,7 +41,7 @@ class PacketSend {
 
         void CreatePacket(const std::string& SourceIP, const std::string& DestIP, int SourcePort, int DestPort);
 
-        void SendPacket();
+        void SendPacket(const std::string& SourceIP, const std::string& DestIP, int SourcePort, int DestPort);
 };
 
 

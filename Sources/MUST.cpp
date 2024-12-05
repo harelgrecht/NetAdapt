@@ -25,10 +25,9 @@ int main() {
             Status.StartEthStatus();
     });
 
- //TODO: Capture and Send rename
-    PacketCapture Capture(SOURCE_DEVICE, SOURCE_IP);
-    std::thread CapturingThread([&Capture] () {
-        if(!Capture.StartCapture(ETH_FILTER)) {
+    PacketCapture PacketSniffer(SOURCE_DEVICE, SOURCE_IP);
+    std::thread CapturingThread([&PacketSniffer] () {
+        if(!PacketSniffer.StartCapture(ETH_FILTER)) {
             std::cerr << "Failed to start capturing packets" << std::endl;
             return -1;
         }
@@ -41,12 +40,9 @@ int main() {
         }
     });
 
-//TODO: encapsule that funcs to one func
-    PacketSend Send(DESTINATION_DEVICE);
-    std::thread SendingThread([&Send]() {
-        Send.FetchPacketFromQueue();
-        Send.CreatePacket(SOURCE_IP, DESTINATION_IP, SOURCE_PORT, DESTINATION_PORT);
-        Send.SendPacket();
+    PacketSend UdpSender(DESTINATION_DEVICE);
+    std::thread SendingThread([&UdpSender]() {
+        UdpSender.SendPacket(SOURCE_IP, DESTINATION_IP, SOURCE_PORT, DESTINATION_PORT);
     });
 
     StatusThread.join();
