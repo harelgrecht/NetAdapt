@@ -36,7 +36,7 @@ bool PacketCapture::SetIPAddress(const std::string& device, const std::string& I
     addr.sin_family = AF_INET;
     addr.sin_port = 0;
 
-    if (inet_pton(AF_INET, ipAddress.c_str(), &addr.sin_addr) != 1) {
+    if (inet_pton(AF_INET, IpAddress.c_str(), &addr.sin_addr) != 1) {
         std::cerr << "Invalid ip address format: " << IpAddress << std::endl;
         close(sockfd);
         return false;

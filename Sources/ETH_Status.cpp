@@ -14,7 +14,7 @@ GPIO LinkStatusLed(LINK_STATUS_LED_PIN, GPIO_OUT);
 GPIO PacketTrafficStatusLed(PACKET_TRAFFIC_LED_PIN, GPIO_OUT);
 bool PacketRecived = false;
 
-const std::string ETHStatus::InterfaceMap[ETH_DEVICE_COUNT] = {"eth0", "eth1"};
+const std::string ETHStatus::InterfaceMap[NUM_ETHERNET_DEVICES] = {"eth0", "eth1"};
 
 
 ETHStatus::ETHStatus() {};
@@ -24,7 +24,7 @@ void ETHStatus::StartEthStatus() {
 }
 
 void ETHStatus::UpdateEthStatus() {
-    for(int i = 0; i < ETH_DEVICE_COUNT; i++){
+    for(int i = 0; i < NUM_ETHERNET_DEVICES; i++){
         if (IsEthDeviceRunning(InterfaceMap[i]) == true) {
             LinkStatusLed.SetValue(GPIO_ON);
                 if (PacketRecived == true) {

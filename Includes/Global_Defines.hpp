@@ -13,8 +13,8 @@ class GPIO;
 #define GPIO_IN "in"
 #define GPIO_EXPORT_PATH "/sys/class/gpio/export"
 #define GPIO_UNEXPORT_PATH "/sys/class/gpio/unexport"
-#define GPIO_DIRECTION_FILE "/sys/class/gpio/gpio%d/direction"
-#define GPIO_VALUE_FILE "/sys/class/gpio/gpio%d/value"
+#define GPIO_DIRECTION_PATH "/sys/class/gpio/gpio%d/direction"
+#define GPIO_VALUE_PATH "/sys/class/gpio/gpio%d/value"
 #define LED_BLINK_DURATION_MS 250
 extern GPIO LinkStatusLed;
 extern GPIO PacketTrafficStatusLed;

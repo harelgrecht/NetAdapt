@@ -16,7 +16,7 @@ class ETHStatus {
         bool IsEthDeviceRunning(const std::string& DeviceName);
 
         
-        static const std::string InterfaceMap[ETH_DEVICE_COUNT];
+        static const std::string InterfaceMap[NUM_ETHERNET_DEVICES];
 };
 
 #endif

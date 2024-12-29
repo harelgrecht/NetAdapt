@@ -73,7 +73,7 @@ void PacketSend::FetchPacketFromQueue() {
 
 void PacketSend::SendPacket(const std::string& SourceIP, const std::string& DestIP, int SourcePort, int DestPort) {
     FetchPacketFromQueue();
-    CreatePacket(); 
+    CreatePacket(SourceIP, DestIP, SourcePort, DestPort); 
     if(sendto(Socket, ETHPacket, iph_send -> tot_len, 0, (struct sockaddr *)&DestInfo, sizeof(DestInfo)) < 0)
         std::cerr << "Failed sending the packet: " << PacketID << " Error: " << std::strerror(errno) << std::endl;
 }
