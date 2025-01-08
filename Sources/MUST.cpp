@@ -3,6 +3,7 @@
 #include "../Includes/Packet_Capture.hpp"
 #include "../Includes/Packet_Process.hpp"
 #include "../Includes/Packet_Send.hpp"
+#include "../Includes/Exceptions.hpp"
 
 #include <csignal>
 #include <thread>
@@ -25,13 +26,23 @@ int main() {
             Status.StartEthStatus();
     });
 
-    PacketCapture PacketSniffer(SOURCE_DEVICE, SOURCE_IP);
-    std::thread CapturingThread([&PacketSniffer] () {
-        if(!PacketSniffer.StartCapture(ETH_FILTER)) {
-            std::cerr << "Failed to start capturing packets" << std::endl;
-            return -1;
+
+
+#ifdef MOCK_UP
+    std::thread CapturingThread([] () {
+        SimulatePacketInjector();
+    });
+#else
+        PacketCapture PacketSniffer(SOURCE_DEVICE, SOURCE_IP);
+        std::thread CapturingThread([&PacketSniffer] () {
+        try{
+            PacketSniffer.StartCapture(ETH_FILTER);
+        }
+        catch(NetworkException& e){
+            std::cerr << "Failed in capturing packets" << e.what() << std::endl;
         }
     });
+#endif
 
     PacketProcess PacketProcessor;
     std::thread ProccesingThread([&PacketProcessor]() {

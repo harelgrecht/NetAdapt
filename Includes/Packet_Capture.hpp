@@ -34,7 +34,9 @@ class PacketCapture {
 
 };
 
-
+//MockUp functions
+void CreateSimulatedPackets(std::vector<std::vector<uint8_t>>& packets);
+void SimulatePacketInjector();
 
 
 #endif

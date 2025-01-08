@@ -1,6 +1,7 @@
 # Compiler and Flags
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -I./Includes
+LIBFLAGS = -lz -lpcap
 
 # Directories
 SRCDIR = Sources
@@ -8,33 +9,33 @@ INCDIR = Includes
 OBJDIR = obj
 BINDIR = bin
 
-# Source Files
+# Source and Object Files
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
-# Object Files
 OBJS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
-# Target Executable
-TARGET = $(BINDIR)/MUST
+
+# Targets
+NORMAL_OUTPUT = $(BINDIR)/MUST.o
+MOCK_OUTPUT = $(BINDIR)/MOCK_MUST.o
 
 # Ensure directories exist
-$(shell mkdir -p $(OBJDIR) $(BINDIR))
+$(OBJDIR) $(BINDIR):
+	mkdir -p $@
 
-# Default Target
-all: $(TARGET)
-
-# Linking Target Executable
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@ -lpcap -lz
-
-# Compile Each Source File into Object File
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Clean Up
+# Clean up build artifacts
 clean:
-	rm -rf $(OBJDIR)/*.o $(TARGET)
+	rm -rf $(OBJDIR) $(BINDIR)
 
-run:
-	sudo ./bin/MUST
+# Normal compilation (without MOCK_UP)
+normal_compile: $(OBJDIR) $(BINDIR)
+	$(CXX) $(CXXFLAGS) $(SRCS) -o $(NORMAL_OUTPUT) $(LIBFLAGS)
 
-# Phony Targets
-.PHONY: all clean
+# Mock compilation (with MOCK_UP)
+mock_compile: $(OBJDIR) $(BINDIR)
+	$(CXX) $(CXXFLAGS) -DMOCK_UP $(SRCS) -o $(MOCK_OUTPUT) $(LIBFLAGS)
+
+# Run the compiled program
+normal_run: $(NORMAL_OUTPUT)
+	sudo ./$(NORMAL_OUTPUT)
+
+mock_run: $(MOCK_OUTPUT)
+	sudo ./$(MOCK_OUTPUT)
