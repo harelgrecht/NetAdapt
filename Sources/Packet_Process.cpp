@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <zlib.h>
+
 Queue PacketProcess::SendQueue;
 
 void PacketProcess::GetPackets() {

@@ -8,16 +8,21 @@
 #include <arpa/inet.h>
 
 PacketSend::PacketSend(const std::string& Device) : ETHDevice(Device), PayloadData(nullptr), PayloadLen(0) {
+#ifndef MOCK_UP
     PayloadData = new uint8_t[PACKET_SIZE];
     CreateSocket(ETHDevice.c_str());
+#endif
 }
 
 PacketSend::~PacketSend() {
+#ifndef MOCK_UP
     CloseSocket();
-    delete[] PayloadData;
+    delete[] PayloadData
+#endif
 }
 
 void PacketSend::CreateSocket(const std::string& Device) {
+#ifndef MOCK_UP
     Socket = socket(AF_INET, SOCK_DGRAM, 0);
     if (Socket < 0)
         throw std::runtime_error("Failed to create socket: " + std::string(std::strerror(errno)));
@@ -26,11 +31,14 @@ void PacketSend::CreateSocket(const std::string& Device) {
         close(Socket);
         throw std::runtime_error("Faild to bind socket: " + std::string(std::strerror(errno)));
     }
+#endif
 }
 
 void PacketSend::CloseSocket() {
+#ifndef MOCK_UP
     if (Socket >= 0)
         close(Socket);
+#endif
 }
 
 void PacketSend::CreateIPHeader(const std::string& SourceIP, const std::string& DestIP, size_t PayloadLen) {
@@ -72,8 +80,10 @@ void PacketSend::FetchPacketFromQueue() {
 }
 
 void PacketSend::SendPacket(const std::string& SourceIP, const std::string& DestIP, int SourcePort, int DestPort) {
+#ifndef MOCK_UP
     FetchPacketFromQueue();
     CreatePacket(SourceIP, DestIP, SourcePort, DestPort); 
     if(sendto(Socket, ETHPacket, iph_send -> tot_len, 0, (struct sockaddr *)&DestInfo, sizeof(DestInfo)) < 0)
         std::cerr << "Failed sending the packet: " << PacketID << " Error: " << std::strerror(errno) << std::endl;
+#endif
 }

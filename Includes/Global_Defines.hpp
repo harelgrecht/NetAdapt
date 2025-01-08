@@ -44,8 +44,7 @@ extern bool PacketRecived;
 #define IP_VERSION 4
 
 // Queue Module
-#define MAX_QUEUE_CAPACITY 100
-
+#define MAX_QUEUE_CAPACITY 1024
 
 //MUST Module
 #define SOURCE_DEVICE "eth0"

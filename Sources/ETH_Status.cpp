@@ -20,10 +20,13 @@ const std::string ETHStatus::InterfaceMap[NUM_ETHERNET_DEVICES] = {"eth0", "eth1
 ETHStatus::ETHStatus() {};
 
 void ETHStatus::StartEthStatus() {
+#ifndef MOCK_UP
     UpdateEthStatus();
+#endif
 }
 
 void ETHStatus::UpdateEthStatus() {
+#ifndef MOCK_UP
     for(int i = 0; i < NUM_ETHERNET_DEVICES; i++){
         if (IsEthDeviceRunning(InterfaceMap[i]) == true) {
             LinkStatusLed.SetValue(GPIO_ON);
@@ -37,10 +40,12 @@ void ETHStatus::UpdateEthStatus() {
             LinkStatusLed.SetValue(GPIO_OFF);
         }
     }
+#endif
 }
 
 
 bool ETHStatus::IsEthDeviceRunning(const std::string& DeviceName) {
+#ifndef MOCK_UP
     int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socketfd < 0){
         perror("socket");
@@ -56,5 +61,5 @@ bool ETHStatus::IsEthDeviceRunning(const std::string& DeviceName) {
     
     close(socketfd);
     return (ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING);
-    
+#endif
 }
