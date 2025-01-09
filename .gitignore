@@ -1,0 +1,5 @@
+SCP.txt
+obj/
+bin/
+.vscode/
+-p/
