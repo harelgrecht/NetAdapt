@@ -2,6 +2,7 @@
 #define PACKET_CAPTURE_HPP
 
 #include "Queue.hpp"
+#include "Network_Config.hpp"
 
 #include <string>
 #include <iostream>
@@ -12,7 +13,7 @@
 
 class PacketCapture {
     public:
-        PacketCapture(const std::string& EthDevice, std::string IpAddress);
+        PacketCapture(NetworkConfig& networkInterface);
         ~PacketCapture();
 
         bool StartCapture(const std::string& FilterString);
@@ -20,18 +21,16 @@ class PacketCapture {
         static Queue ReciveQueue;
 
     private:
-        static void RecivePacketHandler(uint8_t* GlobalData, const struct pcap_pkthdr* PacketHeader, const uint8_t* PacketData);
-        bool SetIPAddress(const std::string& device, const std::string& IpAddress);
 
-        bool OpenDevice();
-        bool SetFilter(const std::string& FilterString);
-
-
+        NetworkConfig& ethInterface;
         char ErrBuffer[PCAP_ERRBUF_SIZE];
-        std::string Device;
-        std::string IpAddress;
         pcap_t* NetworkDescriptor;
 
+
+        bool PcapDeviceOperation();
+        bool SetPcapFilter(const std::string& FilterString);
+
+        static void RecivePacketHandler(uint8_t* GlobalData, const struct pcap_pkthdr* PacketHeader, const uint8_t* PacketData);
 };
 
 //MockUp functions

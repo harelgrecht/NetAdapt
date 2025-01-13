@@ -4,6 +4,7 @@
 #include "../Includes/Packet_Process.hpp"
 #include "../Includes/Packet_Send.hpp"
 #include "../Includes/Exceptions.hpp"
+#include "../Includes/Network_Config.hpp"
 
 #include <csignal>
 #include <thread>
@@ -20,6 +21,12 @@ int main() {
     
     std::signal(SIGINT, SignalHandler);
 
+    NetworkConfig eth0(SOURCE_DEVICE, SOURCE_IP, SOURCE_PORT);
+    eth0.bindSocket();
+
+    NetworkConfig eth1(DESTINATION_DEVICE, DESTINATION_IP, DESTINATION_PORT);
+    eth1.bindSocket();
+
     ETHStatus Status;
     std::thread StatusThread([&Status]() {
         while(KeepRunning)
@@ -33,7 +40,7 @@ int main() {
         SimulatePacketInjector();
     });
 #else
-        PacketCapture PacketSniffer(SOURCE_DEVICE, SOURCE_IP);
+        PacketCapture PacketSniffer(eth0);
         std::thread CapturingThread([&PacketSniffer] () {
         try{
             PacketSniffer.StartCapture(ETH_FILTER);

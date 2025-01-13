@@ -1,6 +1,6 @@
 #include "../Includes/Queue.hpp"
 
-Queue::Queue() : Front(0), Rear(0), CurrentlyPacketsCount(0), Packets(MAX_QUEUE_CAPACITY) {};
+Queue::Queue() : Packets(MAX_QUEUE_CAPACITY), CurrentlyPacketsCount(0), Front(0), Rear(0) {}
 
 bool Queue::isFull() {
     Mutex.lock();

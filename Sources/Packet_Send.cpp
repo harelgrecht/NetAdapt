@@ -17,7 +17,7 @@ PacketSend::PacketSend(const std::string& Device) : ETHDevice(Device), PayloadDa
 PacketSend::~PacketSend() {
 #ifndef MOCK_UP
     CloseSocket();
-    delete[] PayloadData
+    delete[] PayloadData;
 #endif
 }
 

@@ -48,10 +48,10 @@ extern bool PacketRecived;
 
 //MUST Module
 #define SOURCE_DEVICE "eth0"
-#define SOURCE_IP "192.168.1.1"
+#define SOURCE_IP "192.168.1.100"
 #define SOURCE_PORT 1234
 #define DESTINATION_DEVICE "eth1"
-#define DESTINATION_IP "192.168.1.2"
+#define DESTINATION_IP "192.168.1.101"
 #define DESTINATION_PORT 1234
 
 #endif // GLOBAL_DEFINES_HPP

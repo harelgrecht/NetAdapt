@@ -14,8 +14,8 @@ SRCS = $(wildcard $(SRCDIR)/*.cpp)
 OBJS = $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 
 # Targets
-NORMAL_OUTPUT = $(BINDIR)/MUST.o
-MOCK_OUTPUT = $(BINDIR)/MOCK_MUST.o
+NORMAL_OUTPUT = $(BINDIR)/Main.o
+MOCK_OUTPUT = $(BINDIR)/MOCK_Main.o
 
 # Ensure directories exist
 $(OBJDIR) $(BINDIR):

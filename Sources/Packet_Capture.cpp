@@ -2,6 +2,7 @@
 #include "../Includes/Packet_Capture.hpp"
 #include "../Includes/Exceptions.hpp"
 #include "../Includes/Queue.hpp"
+#include "../Includes/Network_Config.hpp"
 
 #include <random>
 #include <cstring>
@@ -19,54 +20,17 @@
 Queue PacketCapture::ReciveQueue;
 
 
-PacketCapture::PacketCapture(const std::string& device, std::string IpAddress) : Device(device), IpAddress(IpAddress) {
-#ifndef MOCK_UP
-    SetIPAddress(Device,IpAddress);
-#endif
-}
-
-PacketCapture::~PacketCapture() {
-#ifndef MOCK_UP
-    if (NetworkDescriptor != nullptr)
-        pcap_close(NetworkDescriptor);
-#endif
-}
-
-bool PacketCapture::SetIPAddress(const std::string& device, const std::string& IpAddress) {
-#ifndef MOCK_UP
-    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (sockfd < 0)
-        throw NetworkException("Failed to create a socket for setting IP address.");
-    struct ifreq ifr;
-    memset(&ifr, 0, sizeof(ifr));
-    strncpy(ifr.ifr_name, device.c_str(), MAX_INTERFACE_NAME_LENGTH);
+PacketCapture::PacketCapture(NetworkConfig& networkInterface)
+    : ethInterface(networkInterface), NetworkDescriptor(nullptr) {}
     
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_port = 0;
+PacketCapture::~PacketCapture() {
+    if (NetworkDescriptor) 
+        pcap_close(NetworkDescriptor);
+}
 
-    if (inet_pton(AF_INET, IpAddress.c_str(), &addr.sin_addr) != 1) {
-        std::cerr << "Invalid ip address format: " << IpAddress << std::endl;
-        close(sockfd);
-        throw NetworkException("Invalid IP address format: " + IpAddress);
-    }
-
-    memcpy(&ifr.ifr_addr, &addr, sizeof(struct sockaddr_in));
-
-    if(ioctl(sockfd, SIOCSIFADDR, &ifr) <0 ) {
-        std::cerr << "Failed to set IP address on device: " << device << std::endl;
-        close(sockfd);
-        throw NetworkException("Failed to set IP address on device: " + device);
-    }
-    std::cout << "IP address successfully set on device: " << device << std::endl;
-    close(sockfd);
-#endif
-    return true;
-}   
-
-bool PacketCapture::OpenDevice() {
+bool PacketCapture::PcapDeviceOperation() {
 #ifndef MOCK_UP
-    NetworkDescriptor = pcap_open_live(Device.c_str(), PACKET_SIZE, PROMISC, CAPTURE_READ_TIMEOUT_MS, ErrBuffer);
+    NetworkDescriptor = pcap_open_live(ethInterface.getDeviceName().c_str(), PACKET_SIZE, PROMISC, CAPTURE_READ_TIMEOUT_MS, ErrBuffer);
     if (NetworkDescriptor == nullptr){
         throw NetworkException("Error opening device: " + std::string(ErrBuffer));
     }
@@ -74,10 +38,8 @@ bool PacketCapture::OpenDevice() {
     return true;
 }
 
-bool PacketCapture::SetFilter(const std::string& FilterString) {
+bool PacketCapture::SetPcapFilter(const std::string& FilterString) {
 #ifndef MOCK_UP
-    if (!NetworkDescriptor) 
-        throw NetworkException("Device is not open.");
     struct bpf_program bpf_filter;
     if(pcap_compile(NetworkDescriptor, &bpf_filter, FilterString.c_str(),0, PCAP_NETMASK_UNKNOWN) == -1) {
         pcap_freecode(&bpf_filter);
@@ -96,8 +58,8 @@ bool PacketCapture::SetFilter(const std::string& FilterString) {
 
 bool PacketCapture::StartCapture(const std::string& FilterString) {
     try {
-        OpenDevice();
-        SetFilter(FilterString);
+        PcapDeviceOperation();
+        SetPcapFilter(FilterString);
     } catch (const NetworkException& e) {
         std::cerr << "Error starting capture: " << e.what() << std::endl;
     }
@@ -105,7 +67,7 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
 #ifdef MOCK_UP
     SimulatePacketInjector();
 #else
-    std::cout << "Starting capturing ETH packets on device " << Device << std::endl;
+    std::cout << "Starting capturing ETH packets on device: " << ethInterface.getDeviceName() << std::endl;
     if (pcap_loop(NetworkDescriptor, CAPTURE_READ_TIMEOUT_MS, RecivePacketHandler, reinterpret_cast<uint8_t*>(this)) < 0) {
         throw NetworkException("Error capturing packets: " + std::string(pcap_geterr(NetworkDescriptor)));
     }

@@ -1,2 +1,0 @@
-ssh-keygen -R 192.168.1.2
-scp -r C:\Projects\VisualStudio_Projects\MUST harel@192.168.1.2:/home/harel
