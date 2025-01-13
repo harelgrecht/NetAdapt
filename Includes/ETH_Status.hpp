@@ -1,22 +1,19 @@
 #ifndef ETH_STATUS_HPP
 #define ETH_STATUS_HPP
 
+#include "Network_Config.hpp"
+#include "GPIO_Handler.hpp"
 
-#include <string>
-#include <cstdint>
-#include <array>
+class ETH_Status {
+private:
+    NetworkConfig& ethInterface; 
+    bool isInterfaceUp();        
+    bool isRXActive();           
 
-class ETHStatus {
-    public:
-        ETHStatus();
-        void StartEthStatus();
-        
-    private:
-        void UpdateEthStatus();
-        bool IsEthDeviceRunning(const std::string& DeviceName);
+public:
+    ETH_Status(NetworkConfig& config);
 
-        
-        static const std::string InterfaceMap[NUM_ETHERNET_DEVICES];
+    void StartEthStatus(); 
 };
 
-#endif
+#endif // ETH_STATUS_HPP

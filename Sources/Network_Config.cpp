@@ -20,6 +20,19 @@ std::string NetworkConfig::getDeviceName() const {
     return deviceName;
 }
 
+int NetworkConfig::getSocketFD() const {
+    return socketFD;
+}
+
+std::string NetworkConfig::getIPAddress() const {
+    return ipAddress;
+}
+
+uint16_t NetworkConfig::getPort() const {
+    return port;
+}
+
+
 void NetworkConfig::configureInterface() {
     socketFD = socket(AF_INET, SOCK_DGRAM, 0);
     if (socketFD < 0) {

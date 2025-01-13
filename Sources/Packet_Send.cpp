@@ -1,5 +1,6 @@
 #include "../Includes/Packet_Send.hpp"
 #include "../Includes/Global_Defines.hpp"
+#include "../Includes/Queue.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -7,83 +8,60 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-PacketSend::PacketSend(const std::string& Device) : ETHDevice(Device), PayloadData(nullptr), PayloadLen(0) {
-#ifndef MOCK_UP
-    PayloadData = new uint8_t[PACKET_SIZE];
-    CreateSocket(ETHDevice.c_str());
-#endif
-}
+PacketSend::PacketSend(NetworkConfig& config, const std::string& DestIP, const int& DestPort)
+    : ethInterface(config), payloadData(new uint8_t[PACKET_SIZE]), payloadLen(0), DestIP(DestIP), DestPort(DestPort) {
+    }
 
 PacketSend::~PacketSend() {
 #ifndef MOCK_UP
-    CloseSocket();
-    delete[] PayloadData;
+    delete[] payloadData;
 #endif
 }
 
-void PacketSend::CreateSocket(const std::string& Device) {
-#ifndef MOCK_UP
-    Socket = socket(AF_INET, SOCK_DGRAM, 0);
-    if (Socket < 0)
-        throw std::runtime_error("Failed to create socket: " + std::string(std::strerror(errno)));
-
-    if (setsockopt(Socket, SOL_SOCKET, SO_BINDTODEVICE, Device.c_str(), Device.length() + 1) < 0) {
-        close(Socket);
-        throw std::runtime_error("Faild to bind socket: " + std::string(std::strerror(errno)));
-    }
-#endif
-}
-
-void PacketSend::CloseSocket() {
-#ifndef MOCK_UP
-    if (Socket >= 0)
-        close(Socket);
-#endif
-}
-
-void PacketSend::CreateIPHeader(const std::string& SourceIP, const std::string& DestIP, size_t PayloadLen) {
+void PacketSend::CreateIPHeader() {
     iph_send->ihl = IP_HEADER_LENGTH_UNITS;
     iph_send->version = IP_VERSION;
     iph_send->tos = 0;
-    iph_send->tot_len = sizeof(struct iphdr) + sizeof(struct udphdr) + PayloadLen;
+    iph_send->tot_len = sizeof(struct iphdr) + sizeof(struct udphdr) + payloadLen;
     iph_send->id = htons(PacketID++);
     iph_send->frag_off = 0;
     iph_send->ttl = DEFAULT_TTL_VALUE;
     iph_send->protocol = IPPROTO_UDP;
-    iph_send->check = 0; 
-    iph_send->saddr = inet_addr(SourceIP.c_str());
+    iph_send->check = 0;
+    iph_send->saddr = inet_addr(ethInterface.getIPAddress().c_str());
     iph_send->daddr = inet_addr(DestIP.c_str());
 }
 
 
-void PacketSend::CreateUDPHeader(int SourcePort, int DestPort, size_t PayloadLen) {
-    UDPHeader->source = htons(SourcePort);
+void PacketSend::CreateUDPHeader() {
+    UDPHeader->source = htons(ethInterface.getPort());
     UDPHeader->dest = htons(DestPort);
-    UDPHeader->len = htons(sizeof(struct udphdr) + PayloadLen);
+    UDPHeader->len = htons(sizeof(struct udphdr) + payloadLen);
 }
 
-void PacketSend::CreatePacket(const std::string& SourceIP, const std::string& DestIP, int SourcePort, int DestPort) {
-    memcpy(ETHPacket + sizeof(struct iphdr) + sizeof(struct udphdr), PayloadData, PayloadLen);
-    CreateIPHeader(SourceIP, DestIP, PayloadLen);
-    CreateUDPHeader(SourcePort, DestPort, PayloadLen);
+void PacketSend::CreatePacket() {
+    memcpy(ETHPacket + sizeof(struct iphdr) + sizeof(struct udphdr), payloadData, payloadLen);
+    CreateIPHeader();
+    CreateUDPHeader();
 
-    memset(&DestInfo,0 ,sizeof(DestInfo));
-    DestInfo.sin_family = AF_INET;
-    DestInfo.sin_port = htons(DestPort);
-    DestInfo.sin_addr.s_addr = inet_addr(DestIP.c_str());
+    memset(&destInfo, 0, sizeof(destInfo));
+    destInfo.sin_family = AF_INET;
+    destInfo.sin_port = htons(DestPort);
+    destInfo.sin_addr.s_addr = inet_addr(DestIP.c_str());
 }
 
 void PacketSend::FetchPacketFromQueue() {
-    if(PacketProcess::SendQueue.dequeue(PayloadData, PayloadLen) == false) {
+    if(PacketProcess::SendQueue.dequeue(payloadData, payloadLen) == false) {
         std::cout << "Failed to get a packet from the SendQueue" << std::endl;
     }
 }
 
-void PacketSend::SendPacket(const std::string& SourceIP, const std::string& DestIP, int SourcePort, int DestPort) {
+void PacketSend::SendPacket() {
 #ifndef MOCK_UP
     FetchPacketFromQueue();
-    CreatePacket(SourceIP, DestIP, SourcePort, DestPort); 
-    if(sendto(Socket, ETHPacket, iph_send -> tot_len, 0, (struct sockaddr *)&DestInfo, sizeof(DestInfo)) < 0)
+    CreatePacket();
+    int socketFD = ethInterface.getSocketFD();
+    if(sendto(socketFD, ETHPacket, iph_send -> tot_len, 0, (struct sockaddr *)&destInfo, sizeof(destInfo)) < 0)
         std::cerr << "Failed sending the packet: " << PacketID << " Error: " << std::strerror(errno) << std::endl;
 #endif
 }

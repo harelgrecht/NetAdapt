@@ -10,7 +10,9 @@
 #include <thread>
 #include <iostream>
 #include <stdexcept>
-bool KeepRunning = true;
+#include <atomic>
+
+std::atomic<bool> KeepRunning(true);
 
 void SignalHandler(int signal) {
     if (signal == SIGINT) 
@@ -27,13 +29,13 @@ int main() {
     NetworkConfig eth1(DESTINATION_DEVICE, DESTINATION_IP, DESTINATION_PORT);
     eth1.bindSocket();
 
-    ETHStatus Status;
-    std::thread StatusThread([&Status]() {
+    ETH_Status eth0Status(eth0);
+    ETH_Status eth1Status(eth1);
+    std::thread StatusThread([&]() {
         while(KeepRunning)
-            Status.StartEthStatus();
+            eth0Status.StartEthStatus();
+            eth1Status.StartEthStatus();
     });
-
-
 
 #ifdef MOCK_UP
     std::thread CapturingThread([] () {
@@ -58,9 +60,9 @@ int main() {
         }
     });
 
-    PacketSend UdpSender(DESTINATION_DEVICE);
+    PacketSend UdpSender(eth1, DESTINATION_IP, DESTINATION_PORT);
     std::thread SendingThread([&UdpSender]() {
-        UdpSender.SendPacket(SOURCE_IP, DESTINATION_IP, SOURCE_PORT, DESTINATION_PORT);
+        UdpSender.SendPacket();
     });
 
     StatusThread.join();

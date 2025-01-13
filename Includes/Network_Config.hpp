@@ -14,6 +14,11 @@ public:
     ~NetworkConfig();
 
     std::string getDeviceName() const;
+    int getSocketFD() const;
+    std::string getIPAddress() const;
+    uint16_t getPort() const;
+
+
     void bindSocket();
 
 private:

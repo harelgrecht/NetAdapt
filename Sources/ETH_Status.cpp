@@ -1,65 +1,51 @@
-#include "../Includes/Global_Defines.hpp"
 #include "../Includes/ETH_Status.hpp"
+#include "../Includes/Global_Defines.hpp"
 #include "../Includes/GPIO_Handler.hpp"
 
 #include <cstring>
-#include <sys/ioctl.h>
-#include <linux/if.h>
 #include <unistd.h>
-#include <stdexcept>
 #include <iostream>
-
+#include <stdexcept>
+#include <linux/if.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
 
 GPIO LinkStatusLed(LINK_STATUS_LED_PIN, GPIO_OUT);
 GPIO PacketTrafficStatusLed(PACKET_TRAFFIC_LED_PIN, GPIO_OUT);
 bool PacketRecived = false;
 
-const std::string ETHStatus::InterfaceMap[NUM_ETHERNET_DEVICES] = {"eth0", "eth1"};
 
+ETH_Status::ETH_Status(NetworkConfig& config)
+    : ethInterface(config) {}
 
-ETHStatus::ETHStatus() {};
+bool ETH_Status::isInterfaceUp() {
+    struct ifreq ifr;
+    memset(&ifr, 0, sizeof(ifr));
+    strncpy(ifr.ifr_name, ethInterface.getDeviceName().c_str(), IFNAMSIZ);
 
-void ETHStatus::StartEthStatus() {
-#ifndef MOCK_UP
-    UpdateEthStatus();
-#endif
+    // Reuse the socket created in NetworkConfig
+    int sockfd = ethInterface.getSocketFD();
+    if (ioctl(sockfd, SIOCGIFFLAGS, &ifr) >= 0) 
+        return false;
+     return (ifr.ifr_flags & IFF_RUNNING) && (ifr.ifr_flags & IFF_UP);
 }
 
-void ETHStatus::UpdateEthStatus() {
-#ifndef MOCK_UP
-    for(int i = 0; i < NUM_ETHERNET_DEVICES; i++){
-        if (IsEthDeviceRunning(InterfaceMap[i]) == true) {
-            LinkStatusLed.SetValue(GPIO_ON);
-                if (PacketRecived == true) {
-                    PacketTrafficStatusLed.BlinkLed();
-                    PacketRecived = false;
-                } else {
-                    PacketTrafficStatusLed.SetValue(GPIO_OFF);
-                }
+bool ETH_Status::isRXActive() {
+    // Placeholder: Implement RX packet activity check using NetworkConfig.
+    // Use the socket or stats provided by ethInterface.
+    return false; // Replace with real implementation.
+}
+
+void ETH_Status::StartEthStatus() {
+    if (isInterfaceUp()) {
+        LinkStatusLed.SetValue(GPIO_ON);
+        if (isRXActive()) {
+            PacketTrafficStatusLed.BlinkLed();
         } else {
-            LinkStatusLed.SetValue(GPIO_OFF);
+            PacketTrafficStatusLed.BlinkLed();
         }
+    } else {
+        LinkStatusLed.SetValue(GPIO_OFF);
+        PacketTrafficStatusLed.SetValue(GPIO_OFF);
     }
-#endif
-}
-
-
-bool ETHStatus::IsEthDeviceRunning(const std::string& DeviceName) {
-#ifndef MOCK_UP
-    int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (socketfd < 0){
-        perror("socket");
-        return false;
-    }
-    struct ifreq ifr = {};
-    strncpy(ifr.ifr_name, DeviceName.c_str(), MAX_INTERFACE_NAME_LENGTH);
-    if(ioctl(socketfd, SIOCGIFFLAGS, &ifr) < 0) {
-        perror("ioctl");
-        close(socketfd);
-        return false;
-    }
-    
-    close(socketfd);
-    return (ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING);
-#endif
 }
