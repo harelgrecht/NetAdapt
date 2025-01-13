@@ -31,9 +31,11 @@ This project is focused on creating a PetaLinux-based operating system for the *
 1. **Clone the Repository**:
    ```bash
    git clone `https://github.com/HarelGrecht/MUST.git`
-   cd MUST
-   make all
-   make run
+   cd NetAdapt
+   *For mock_up*
+   sudo make clean && sudo make mock_compile && sudo make mock_run
+   *For Normal*
+   sudo make clean && sudo make normal_compile && sudo make normal_run
     ```
 
 2. **Application Flow**:
@@ -46,12 +48,15 @@ The application users a multi-threaded approach to handle packets efficiently:
         - Sends the processed packets over a UDP connection.
     2.4. - **File directory system**:
     ```sh
-    MUST/
+    NetAdapt/
+    ├── Drawings/
     ├── Includes/
     │   ├── ETH_Status.hpp
+    │   ├── Exceptions.hpp
     │   ├── Global_Defines.hpp
     │   ├── GPIO_Handler.hpp
     │   ├── Libraries.hpp
+    │   ├── Network_Config.hpp
     │   ├── Packet_Capture.hpp
     │   ├── Packet_Process.hpp
     │   ├── Packet_Send.hpp
@@ -59,11 +64,13 @@ The application users a multi-threaded approach to handle packets efficiently:
     ├── Sources/
     │   ├── ETH_Status.cpp
     │   ├── GPIO_Handler.cpp
+    │   ├── Main.cpp
+    │   ├── Network_Config.cpp
     │   ├── Packet_Capture.cpp
     │   ├── Packet_Process.cpp
     │   ├── Packet_Send.cpp
     │   ├── Queue.cpp
-    │   ├── MUST.cpp
+    ├── .gitignore
     ├── Makefile
     ├── Readme.md
     ```
