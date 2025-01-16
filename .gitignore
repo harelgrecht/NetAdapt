@@ -2,4 +2,4 @@ SCP.txt
 code/obj/
 code/bin/
 .vscode/
-petalinux/kr260_vivado
+petalinux/
