@@ -92,8 +92,10 @@ void SimulatePacketInjector() {
                 continue; 
             }
             std::cout << "[DEBUG] Payload size: " << payload.size() << std::endl;
-            std::cout << "[DEBUG] Is queue full: " << PacketCapture::ReciveQueue.isFull() << std::endl;
-            std::cout << "[DEBUG] Packets in queue: " << PacketCapture::ReciveQueue.PacketsCount() << std::endl;
+            if(PacketCapture::ReciveQueue.isFull()){
+                std::cout << "[DEBUG] ReciveQueue is full" << std::endl;
+            }
+            std::cout << "[DEBUG] Packets in queue: " << PacketCapture::ReciveQueue.getCurrentPacketsCount() << std::endl;
             if (PacketCapture::ReciveQueue.enqueue(payload.data(), payload.size())) {
                 std::cout << "[MOCK] Simulated packet enqueued, length: " << payload.size() << std::endl;
             } else {

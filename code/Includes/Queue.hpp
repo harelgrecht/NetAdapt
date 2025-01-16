@@ -1,25 +1,29 @@
-#pragma once
+#ifndef QUEUE_HPP
+#define QUEUE_HPP
+
+#include "../Includes/Global_Defines.hpp"
 
 #include <vector>
 #include <mutex>
-#include <optional>
 #include <cstdint>
+#include <algorithm>
 
 class Queue {
-public:
-    Queue();
-
-    bool isFull() const;
-    bool isEmpty() const;
-    bool enqueue(const uint8_t* data, size_t size);
-    std::optional<std::vector<uint8_t>> dequeue();
-    int getCurrentlyPacketsCount() const;
-
 private:
-    mutable std::mutex Mutex;                 
+    int Front;
+    int Rear;
+    int CurrentlyPacketsCount;
     std::vector<std::vector<uint8_t>> Packets;
-    std::vector<size_t> PacketSizes;          
-    size_t CurrentlyPacketsCount = 0;         
-    size_t Front = 0;                         
-    size_t Rear = 0;                          
+    std::vector<size_t> PacketSizes;
+    std::mutex Mutex;
+ 
+public:
+    Queue();                
+    bool enqueue(const uint8_t* data, size_t size);
+    bool dequeue(uint8_t* data, size_t& size);      
+    bool isEmpty();                 
+    bool isFull();
+    int getCurrentPacketsCount();            
 };
+
+#endif // QUEUE_HPP

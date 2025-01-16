@@ -1,55 +1,78 @@
 #include "../Includes/Queue.hpp"
-#include "../Includes/Global_Defines.hpp"
 #include <iostream>
 
-Queue::Queue() : Packets(MAX_QUEUE_CAPACITY), CurrentlyPacketsCount(0), Front(0), Rear(0) {}
-
-bool Queue::isFull() const {
-    Mutex.lock();
-    bool result = CurrentlyPacketsCount == MAX_QUEUE_CAPACITY;
-    Mutex.unlock();
-    return result;
+Queue::Queue()
+    : Front(0), Rear(0), CurrentlyPacketsCount(0), Packets(MAX_QUEUE_CAPACITY), PacketSizes(MAX_QUEUE_CAPACITY) {
+    std::cout << "[DEBUG] Queue initialized. Address: " << this << "\n";
 }
 
-bool Queue::isEmpty() const{
-    Mutex.lock();
-    bool result = CurrentlyPacketsCount == 0;
-    Mutex.unlock();
-    return result;
+bool Queue::isFull() {
+#ifdef MOCK_UP
+    std::cout << "[MOCK] Checking if queue is full. CurrentlyPacketsCount: "
+              << CurrentlyPacketsCount << ", Max Capacity: " << MAX_QUEUE_CAPACITY << "\n";
+    return CurrentlyPacketsCount == MAX_QUEUE_CAPACITY;
+#else
+    std::lock_guard<std::mutex> lock(Mutex);
+    return CurrentlyPacketsCount == MAX_QUEUE_CAPACITY;
+#endif
+}
+
+bool Queue::isEmpty() {
+#ifdef MOCK_UP
+    std::cout << "[MOCK] Checking if queue is empty. CurrentlyPacketsCount: "
+              << CurrentlyPacketsCount << "\n";
+    return CurrentlyPacketsCount == 0;
+#else
+    std::lock_guard<std::mutex> lock(Mutex);
+    return CurrentlyPacketsCount == 0;
+#endif
 }
 
 bool Queue::enqueue(const uint8_t* data, size_t size) {
     if (size > PACKET_SIZE) return false;
-    Mutex.lock();
+
+#ifdef MOCK_UP
     if (isFull()) {
-        Mutex.unlock();
+        std::cout << "[MOCK] Queue is full, cannot enqueue.\n";
         return false;
     }
-    Packets[Rear] = std::vector<uint8_t>(data, data+ size);
-    PacketSizes[Rear] = size; 
-    Rear = (Rear + 1) % MAX_QUEUE_CAPACITY; 
+#else
+    std::lock_guard<std::mutex> lock(Mutex);
+    if (isFull()) return false;
+#endif
+
+    Packets[Rear] = std::vector<uint8_t>(data, data + size);
+    PacketSizes[Rear] = size;
+    Rear = (Rear + 1) % MAX_QUEUE_CAPACITY;
     CurrentlyPacketsCount++;
-    Mutex.unlock();
     return true;
 }
 
-bool Queue::dequeue(uint8_t* data, size_t& size) const{
-    Mutex.lock();
+bool Queue::dequeue(uint8_t* data, size_t& size) {
+#ifdef MOCK_UP
     if (isEmpty()) {
-        Mutex.unlock();
+        std::cout << "[MOCK] Queue is empty, cannot dequeue.\n";
         return false;
     }
+#else
+    std::lock_guard<std::mutex> lock(Mutex);
+    if (isEmpty()) return false;
+#endif
+
     size = PacketSizes[Front];
     std::copy(Packets[Front].begin(), Packets[Front].end(), data);
     Packets[Front].clear();
     Front = (Front + 1) % MAX_QUEUE_CAPACITY;
     CurrentlyPacketsCount--;
-    Mutex.unlock();
     return true;
 }
 
-int Queue::getCurrentlyPacketsCount() const{
-    Mutex.lock();
+int Queue::getCurrentPacketsCount() {
+#ifdef MOCK_UP
+    std::cout << "[MOCK] Getting current packet count: " << CurrentlyPacketsCount << "\n";
     return CurrentlyPacketsCount;
-    Mutex.unlock();
+#else
+    std::lock_guard<std::mutex> lock(Mutex);
+    return CurrentlyPacketsCount;
+#endif
 }
