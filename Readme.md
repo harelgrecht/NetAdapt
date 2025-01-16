@@ -39,13 +39,14 @@ This project is focused on creating a PetaLinux-based operating system for the *
     ```
 
 2. **Application Flow**:
-The application users a multi-threaded approach to handle packets efficiently:
+The application users a multi-threaded approach to handle packets efficiently:\
     2.1. **Packet Capture**:
-        - Captures packets from a networrk interface using `libpcap`.
+        - Captures packets from a networrk interface using `libpcap`.\
     2.2. **Packet Processing**:
-        - Compresses the captured packet using `zlib`.
+        - Compresses the captured packet using `zlib`.\
     2.3 **Packet Sending**:
         - Sends the processed packets over a UDP connection.
+
     2.4. - **File directory system**:
     ```sh
     NetAdapt/
@@ -70,14 +71,20 @@ The application users a multi-threaded approach to handle packets efficiently:
     │   ├── Packet_Process.cpp
     │   ├── Packet_Send.cpp
     │   ├── Queue.cpp
+    ├── docs/
+    │   ├── BlockDiagram.png
+    │   ├── NetworkDiagram.png
+    ├── petalinux/
+    │   ├── Hardware.xsa
+    │   ├── linux.bsp
     ├── .gitignore
     ├── Makefile
     ├── Readme.md
     ```
     2.5. **Block Diagram**:\
-        ![Block Diagram](./Drawings/BlockDiagram.png)\
+        ![Block Diagram](./docs/BlockDiagram.png)\
     2.6. **Network Diagram**:\
-        ![Network Diagram](./Drawings/NetworkDiagram.png)
+        ![Network Diagram](./docs/NetworkDiagram.png)
 
 ### Author
 - Harel Grecht
