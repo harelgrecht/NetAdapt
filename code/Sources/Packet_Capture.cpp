@@ -79,26 +79,21 @@ void SimulatePacketInjector() {
     while (true) {
         std::vector<std::vector<uint8_t>> SimulatedPackets;
         CreateSimulatedPackets(SimulatedPackets); // Create a batch of packets
-
         std::cout << "[MOCK] Injecting fake packets" << std::endl;
         std::cout << "[DEBUG] SimulatedPackets.size(): " << SimulatedPackets.size() << std::endl;
-
         if (SimulatedPackets.empty()) {
             std::cerr << "[ERROR] No packets created. Exiting injection loop." << std::endl;
-            break; // Exit if no packets were created
+            break;
         }
-
         for (const auto& payload : SimulatedPackets) {
             std::cout << "[DEBUG] Looping through payload. Current payload size: " << payload.size() << std::endl;
-
             if (payload.empty()) {
                 std::cerr << "[DEBUG] Skipping empty payload." << std::endl;
-                continue; // Skip empty payloads
+                continue; 
             }
-
             std::cout << "[DEBUG] Payload size: " << payload.size() << std::endl;
             std::cout << "[DEBUG] Is queue full: " << PacketCapture::ReciveQueue.isFull() << std::endl;
-
+            std::cout << "[DEBUG] Packets in queue: " << PacketCapture::ReciveQueue.PacketsCount() << std::endl;
             if (PacketCapture::ReciveQueue.enqueue(payload.data(), payload.size())) {
                 std::cout << "[MOCK] Simulated packet enqueued, length: " << payload.size() << std::endl;
             } else {

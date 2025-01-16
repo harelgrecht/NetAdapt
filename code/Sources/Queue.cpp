@@ -1,15 +1,17 @@
 #include "../Includes/Queue.hpp"
+#include "../Includes/Global_Defines.hpp"
+#include <iostream>
 
 Queue::Queue() : Packets(MAX_QUEUE_CAPACITY), CurrentlyPacketsCount(0), Front(0), Rear(0) {}
 
-bool Queue::isFull() {
+bool Queue::isFull() const {
     Mutex.lock();
     bool result = CurrentlyPacketsCount == MAX_QUEUE_CAPACITY;
     Mutex.unlock();
     return result;
 }
 
-bool Queue::isEmpty() {
+bool Queue::isEmpty() const{
     Mutex.lock();
     bool result = CurrentlyPacketsCount == 0;
     Mutex.unlock();
@@ -18,7 +20,6 @@ bool Queue::isEmpty() {
 
 bool Queue::enqueue(const uint8_t* data, size_t size) {
     if (size > PACKET_SIZE) return false;
-
     Mutex.lock();
     if (isFull()) {
         Mutex.unlock();
@@ -32,7 +33,7 @@ bool Queue::enqueue(const uint8_t* data, size_t size) {
     return true;
 }
 
-bool Queue::dequeue(uint8_t* data, size_t& size) {
+bool Queue::dequeue(uint8_t* data, size_t& size) const{
     Mutex.lock();
     if (isEmpty()) {
         Mutex.unlock();
@@ -47,9 +48,8 @@ bool Queue::dequeue(uint8_t* data, size_t& size) {
     return true;
 }
 
-int Queue::PacketsCount() {
+int Queue::getCurrentlyPacketsCount() const{
     Mutex.lock();
-    int PacketCount = CurrentlyPacketsCount;
+    return CurrentlyPacketsCount;
     Mutex.unlock();
-    return PacketCount;
 }

@@ -3,6 +3,7 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <stdexcept>
+#include "Network_Config.hpp"
 
 NetworkConfig::NetworkConfig(const std::string& device, const std::string& ip, uint16_t port)
     : deviceName(device), ipAddress(ip), port(port), socketFD(-1) {

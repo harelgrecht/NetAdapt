@@ -17,10 +17,8 @@ public:
     int getSocketFD() const;
     std::string getIPAddress() const;
     uint16_t getPort() const;
-
-
     void bindSocket();
-
+    
 private:
     std::string deviceName;
     std::string ipAddress;

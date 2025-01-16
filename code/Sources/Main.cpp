@@ -22,13 +22,17 @@ void SignalHandler(int signal) {
 int main() {
     
     std::signal(SIGINT, SignalHandler);
-
+#ifndef MOCK_UP
     NetworkConfig eth0(SOURCE_DEVICE, SOURCE_IP, SOURCE_PORT);
     eth0.bindSocket();
 
     NetworkConfig eth1(DESTINATION_DEVICE, DESTINATION_IP, DESTINATION_PORT);
     eth1.bindSocket();
+#endif
 
+#ifdef MOCK_UP
+    std::cout << "[MOCK] No hardware to test ETH_status module logic" << std::endl;
+#else
     ETH_Status eth0Status(eth0);
     ETH_Status eth1Status(eth1);
     std::thread StatusThread([&]() {
@@ -36,6 +40,7 @@ int main() {
             eth0Status.StartEthStatus();
             eth1Status.StartEthStatus();
     });
+#endif
 
 #ifdef MOCK_UP
     std::thread CapturingThread([] () {
@@ -60,14 +65,18 @@ int main() {
         }
     });
 
+#ifndef MOCK_UP
     PacketSend UdpSender(eth1, DESTINATION_IP, DESTINATION_PORT);
     std::thread SendingThread([&UdpSender]() {
         UdpSender.SendPacket();
     });
+#endif
 
-    StatusThread.join();
     CapturingThread.join();
     ProccesingThread.join();
+#ifndef MOCK_UP
+    StatusThread.join();
     SendingThread.join();
+#endif
     return 0;
 }
