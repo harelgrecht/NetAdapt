@@ -50,7 +50,6 @@ The application users a multi-threaded approach to handle packets efficiently:\
     2.4. - **File directory system**:
     ```sh
     NetAdapt/
-    ├── Drawings/
     ├── Includes/
     │   ├── ETH_Status.hpp
     │   ├── Exceptions.hpp
