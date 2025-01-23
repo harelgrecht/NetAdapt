@@ -2,4 +2,5 @@ SCP.txt
 code/obj/
 code/bin/
 .vscode/
-petalinux/
+*.xsa
+*.bsp
