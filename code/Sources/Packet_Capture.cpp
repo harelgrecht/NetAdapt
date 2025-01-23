@@ -79,31 +79,31 @@ void SimulatePacketInjector() {
     while (true) {
         std::vector<std::vector<uint8_t>> SimulatedPackets;
         CreateSimulatedPackets(SimulatedPackets); // Create a batch of packets
-        std::cout << "[MOCK] Injecting fake packets" << std::endl;
-        std::cout << "[DEBUG] SimulatedPackets.size(): " << SimulatedPackets.size() << std::endl;
+        std::cout << "[MOCK-Capture] Injecting fake packets" << std::endl;
+        std::cout << "[DEBUG-Capture] SimulatedPackets.size(): " << SimulatedPackets.size() << std::endl;
         if (SimulatedPackets.empty()) {
-            std::cerr << "[ERROR] No packets created. Exiting injection loop." << std::endl;
+            std::cerr << "[ERROR-Capture] No packets created. Exiting injection loop." << std::endl;
             break;
         }
         for (const auto& payload : SimulatedPackets) {
-            std::cout << "[DEBUG] Looping through payload. Current payload size: " << payload.size() << std::endl;
+            std::cout << "[DEBUG-Capture] Looping through payload. Current payload size: " << payload.size() << std::endl;
             if (payload.empty()) {
-                std::cerr << "[DEBUG] Skipping empty payload." << std::endl;
+                std::cerr << "[DEBUG-Capture] Skipping empty payload." << std::endl;
                 continue; 
             }
-            std::cout << "[DEBUG] Payload size: " << payload.size() << std::endl;
+            std::cout << "[DEBUG-Capture] Payload size: " << payload.size() << std::endl;
             if(PacketCapture::ReciveQueue.isFull()){
-                std::cout << "[DEBUG] ReciveQueue is full" << std::endl;
+                std::cout << "[DEBUG-Capture] ReciveQueue is full" << std::endl;
             }
-            std::cout << "[DEBUG] Packets in queue: " << PacketCapture::ReciveQueue.getCurrentPacketsCount() << std::endl;
+            std::cout << "[DEBUG-Capture] Packets in queue: " << PacketCapture::ReciveQueue.getCurrentPacketsCount() << std::endl;
             if (PacketCapture::ReciveQueue.enqueue(payload.data(), payload.size())) {
-                std::cout << "[MOCK] Simulated packet enqueued, length: " << payload.size() << std::endl;
+                std::cout << "[MOCK-Capture] Simulated packet enqueued, length: " << payload.size() << std::endl;
             } else {
-                std::cerr << "[MOCK] Failed to enqueue simulated packet. Queue might be full." << std::endl;
+                std::cerr << "[MOCK-Capture] Failed to enqueue simulated packet. Queue might be full." << std::endl;
             }
         }
 
-        std::cout << "[DEBUG] Finished iterating through SimulatedPackets." << std::endl;
+        std::cout << "[DEBUG-Capture] Finished iterating through SimulatedPackets." << std::endl;
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Delay before every packet
     }

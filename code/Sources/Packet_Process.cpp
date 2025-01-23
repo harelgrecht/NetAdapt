@@ -1,6 +1,7 @@
 #include "../Includes/Packet_Process.hpp"
 #include "../Includes/Packet_Capture.hpp"
 #include "../Includes/Global_Defines.hpp"
+#include "../Includes/Queue.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -13,9 +14,11 @@ void PacketProcess::GetPackets() {
     uint8_t Packet[PACKET_SIZE];
     size_t PacketSize;
     for(int PacketIndex = 0; PacketIndex < NUM_PACKETS_TO_FETCH; PacketIndex++) {
-        if(!PacketCapture::ReciveQueue.dequeue(Packet, PacketSize)) {
-            std::cerr << "Failed to fetch packet from ReciveQueue" << std::endl;
-            continue;
+        if (!PacketCapture::ReciveQueue.isEmpty()) {
+            if(!PacketCapture::ReciveQueue.dequeue(Packet, PacketSize)) {
+                std::cerr << "Failed to fetch packet from ReciveQueue" << std::endl;
+                continue;
+            }
         }
         RawDataBuffer.insert(RawDataBuffer.end(), Packet, Packet + PacketSize);
     }
@@ -41,11 +44,13 @@ void PacketProcess::StorePackets() {
     int offset = 0;
     while (offset < TotalSize) {
         size_t Chunk = std::min(MAX_COMPRESSED_PACKET_SIZE, TotalSize - offset);
-        if (!SendQueue.enqueue(CompressedDataBuffer.data() + offset, Chunk))
-            std::cerr << "Send Queue is full" << std::endl;
+        if(SendQueue.isFull()){
+            if (!SendQueue.enqueue(CompressedDataBuffer.data() + offset, Chunk))
+                std::cerr << "faild to enqueue" << std::endl;
+            }   
+        }
         offset += Chunk;
     }
-}
 
 void PacketProcess::ProcessStart() {
     GetPackets();
