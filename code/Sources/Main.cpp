@@ -60,9 +60,13 @@ int main() {
 
     PacketProcess PacketProcessor;
     std::thread ProccesingThread([&PacketProcessor]() {
+#ifdef MOCK_UP
+        PacketProcessor.ProcessStart();
+#else
         while(KeepRunning) {
             PacketProcessor.ProcessStart();
         }
+#endif
     });
 
 #ifndef MOCK_UP

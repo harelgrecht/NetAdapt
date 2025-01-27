@@ -22,6 +22,8 @@ class PacketProcess {
         void GetPackets(); // will get 5 packets from the queue and store them in a big buffer 630 * 5 ??
         void CompressPacket(); //Will take the big buffer and compress it to a small buffer of 360 if the big buffer will be compress to many small packets of 360 it will give them and id
         void StorePackets(); // will send the packets to another Queue
+        void DecompressPacket();
+
 };
 
 

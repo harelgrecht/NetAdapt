@@ -33,6 +33,9 @@ normal_compile: $(OBJDIR) $(BINDIR)
 mock_compile: $(OBJDIR) $(BINDIR)
 	$(CXX) $(CXXFLAGS) -DMOCK_UP $(SRCS) -o $(MOCK_OUTPUT) $(LIBFLAGS)
 
+mock_gdb_compile: $(OBJDIR) $(BINDIR)
+	$(CXX) $(CXXFLAGS) -DMOCK_UP -g $(SRCS) -o $(MOCK_OUTPUT) $(LIBFLAGS)
+
 # Run the compiled program
 normal_run: $(NORMAL_OUTPUT)
 	sudo ./$(NORMAL_OUTPUT)

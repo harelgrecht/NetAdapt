@@ -76,24 +76,24 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
 }
 
 void SimulatePacketInjector() {
-    while (true) {
         std::vector<std::vector<uint8_t>> SimulatedPackets;
         CreateSimulatedPackets(SimulatedPackets); // Create a batch of packets
-        std::cout << "[MOCK-Capture] Injecting fake packets" << std::endl;
-        std::cout << "[DEBUG-Capture] SimulatedPackets.size(): " << SimulatedPackets.size() << std::endl;
+        std::cout << "[MOCK-Capture] Injecting fake packets, packets to inject: " << SimulatedPackets.size() << std::endl;
         if (SimulatedPackets.empty()) {
             std::cerr << "[ERROR-Capture] No packets created. Exiting injection loop." << std::endl;
-            break;
+            //continue;
         }
         for (const auto& payload : SimulatedPackets) {
             std::cout << "[DEBUG-Capture] Looping through payload. Current payload size: " << payload.size() << std::endl;
             if (payload.empty()) {
                 std::cerr << "[DEBUG-Capture] Skipping empty payload." << std::endl;
-                continue; 
+           //     continue; 
             }
             std::cout << "[DEBUG-Capture] Payload size: " << payload.size() << std::endl;
             if(PacketCapture::ReciveQueue.isFull()){
                 std::cout << "[DEBUG-Capture] ReciveQueue is full" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            //    continue;
             }
             std::cout << "[DEBUG-Capture] Packets in queue: " << PacketCapture::ReciveQueue.getCurrentPacketsCount() << std::endl;
             if (PacketCapture::ReciveQueue.enqueue(payload.data(), payload.size())) {
@@ -106,7 +106,6 @@ void SimulatePacketInjector() {
         std::cout << "[DEBUG-Capture] Finished iterating through SimulatedPackets." << std::endl;
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Delay before every packet
-    }
 }
 
 
@@ -121,11 +120,13 @@ void CreateSimulatedPackets(std::vector<std::vector<uint8_t>>& packets) {
     std::mt19937 gen(rd()); // Mersenne Twister engine
     std::uniform_int_distribution<uint8_t> dis(0, 255); // Random byte distribution
 
-    for (int i = 0; i < 15; i++) { // Loop condition fixed: i < 15
-        std::vector<uint8_t> payload;
-        payload.reserve(payloadSize); // Allocate enough memory
+    for (int i = 0; i < PACKET_TO_CREATE ; i++) {
+         std::vector<uint8_t> payload;
+         payload.reserve(payloadSize); // Allocate enough memory
+        // for (size_t j = 0; j < payloadSize; j++) {
+        //     payload.push_back(dis(gen));
         for (size_t j = 0; j < payloadSize; j++) {
-            payload.push_back(dis(gen));
+        payload.push_back(0xAA); // Repeating byte pattern
         }
         packets.push_back(payload); // Add the generated packet to the list
         std::cout << "[MOCK] Packet " << i + 1 << " created.\n";

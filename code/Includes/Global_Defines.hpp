@@ -32,9 +32,10 @@ extern bool PacketRecived;
 #define CAPTURE_READ_TIMEOUT_MS 1000
 #define PACKET_CAPTURE_LOOP_COUNT -1
 #define ETH_FILTER "udp and src host 192.168.1.1"
+#define PACKET_TO_CREATE 5
 
 //Packet_Process Module
-#define COMPRESSION_OVERHEAD_PERCENT (10/100)
+#define COMPRESSION_OVERHEAD_PERCENT (10.0 / 100.0)
 #define ZLIB_OVERHEAD_BYTES 12
 #define NUM_PACKETS_TO_FETCH 5
 
