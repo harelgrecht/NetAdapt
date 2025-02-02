@@ -16,9 +16,7 @@
 #include <chrono>
 #include <thread>
 
-
 Queue PacketCapture::ReciveQueue;
-
 
 PacketCapture::PacketCapture(NetworkConfig& networkInterface)
     : ethInterface(networkInterface), NetworkDescriptor(nullptr) {}
@@ -77,61 +75,48 @@ bool PacketCapture::StartCapture(const std::string& FilterString) {
 
 void SimulatePacketInjector() {
         std::vector<std::vector<uint8_t>> SimulatedPackets;
-        CreateSimulatedPackets(SimulatedPackets); // Create a batch of packets
-        std::cout << "[MOCK-Capture] Injecting fake packets, packets to inject: " << SimulatedPackets.size() << std::endl;
-        if (SimulatedPackets.empty()) {
+        CreateSimulatedPackets(SimulatedPackets); 
+        std::cout << "[MOCK-Capture] Injecting fake packets, packets to inject: " << SimulatedPackets.size() << std::endl << std::endl;
+        if (SimulatedPackets.empty())
             std::cerr << "[ERROR-Capture] No packets created. Exiting injection loop." << std::endl;
-            //continue;
-        }
-        for (const auto& payload : SimulatedPackets) {
-            std::cout << "[DEBUG-Capture] Looping through payload. Current payload size: " << payload.size() << std::endl;
-            if (payload.empty()) {
+        for (int PacketIndex = 0; PacketIndex < SimulatedPackets.size(); PacketIndex++) {
+            std::cout << "[DEBUG-Capture] Packet number: " << PacketIndex <<". Current packet size: " << SimulatedPackets[PacketIndex].size() << std::endl;
+            if (SimulatedPackets[PacketIndex].empty()) {
                 std::cerr << "[DEBUG-Capture] Skipping empty payload." << std::endl;
-           //     continue; 
             }
-            std::cout << "[DEBUG-Capture] Payload size: " << payload.size() << std::endl;
             if(PacketCapture::ReciveQueue.isFull()){
                 std::cout << "[DEBUG-Capture] ReciveQueue is full" << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            //    continue;
             }
             std::cout << "[DEBUG-Capture] Packets in queue: " << PacketCapture::ReciveQueue.getCurrentPacketsCount() << std::endl;
-            if (PacketCapture::ReciveQueue.enqueue(payload.data(), payload.size())) {
-                std::cout << "[MOCK-Capture] Simulated packet enqueued, length: " << payload.size() << std::endl;
+            if (PacketCapture::ReciveQueue.enqueue(SimulatedPackets[PacketIndex].data(), SimulatedPackets[PacketIndex].size())) {
+                std::cout << "[MOCK-Capture] Simulated packet enqueued, length: " << SimulatedPackets[PacketIndex].size() << std::endl;
+                std::cout << std::endl;
             } else {
                 std::cerr << "[MOCK-Capture] Failed to enqueue simulated packet. Queue might be full." << std::endl;
             }
         }
-
         std::cout << "[DEBUG-Capture] Finished iterating through SimulatedPackets." << std::endl;
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Delay before every packet
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
-
 void CreateSimulatedPackets(std::vector<std::vector<uint8_t>>& packets) {
-    std::cout << "[MOCK] Start create fake UDP pakcets" << std::endl;
-    const std::string sourceIP = "192.168.1.2";
-    const std::string destinationIP = "192.168.1.3";
-    const size_t payloadSize = 360;
-
-    // Random number generator setup
-    std::random_device rd; // Seed for randomness
-    std::mt19937 gen(rd()); // Mersenne Twister engine
-    std::uniform_int_distribution<uint8_t> dis(0, 255); // Random byte distribution
-
-    for (int i = 0; i < PACKET_TO_CREATE ; i++) {
-         std::vector<uint8_t> payload;
-         payload.reserve(payloadSize); // Allocate enough memory
-        // for (size_t j = 0; j < payloadSize; j++) {
-        //     payload.push_back(dis(gen));
-        for (size_t j = 0; j < payloadSize; j++) {
-        payload.push_back(0xAA); // Repeating byte pattern
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<uint8_t> dis(0, 255);
+    packets.resize(PACKET_TO_CREATE, std::vector<uint8_t>(PACKET_SIZE));
+    for (size_t i = 0; i < PACKET_TO_CREATE; i++) {
+        std::string basePattern = "COMPRESSIBLE"; 
+        size_t patternSize = basePattern.size();
+        for (size_t j = 0; j < PACKET_SIZE; j++) {
+            if (j % 4 == 0) {  
+                packets[i][j] = basePattern[j % patternSize];  
+            } else {
+                packets[i][j] = dis(gen);
+            }
         }
-        packets.push_back(payload); // Add the generated packet to the list
-        std::cout << "[MOCK] Packet " << i + 1 << " created.\n";
+        std::cout << "[MOCK] Packet " << i + 1 << " created with semi-random compressible data.\n";
     }
-    std::cout << "[MOCK] Finished creating packets." << std::endl;
 }
 
 /* Store the packets in the Queue without udp header, just raw data (payload) */
