@@ -4,7 +4,7 @@
 #include <string>
 
 //GPIO_Handler Module
-class GPIO;
+class ledHandler;
 #define LINK_STATUS_LED_PIN 506
 #define PACKET_TRAFFIC_LED_PIN 507
 #define GPIO_ON 1
@@ -16,8 +16,8 @@ class GPIO;
 #define GPIO_DIRECTION_PATH "/sys/class/gpio/gpio%d/direction"
 #define GPIO_VALUE_PATH "/sys/class/gpio/gpio%d/value"
 #define LED_BLINK_DURATION_MS 250
-extern GPIO LinkStatusLed;
-extern GPIO PacketTrafficStatusLed;
+extern ledHandler LinkStatusLed;
+extern ledHandler PacketTrafficStatusLed;
 
 //ETH_Status Module
 #define NUM_ETHERNET_DEVICES 2

@@ -122,6 +122,7 @@ void CreateSimulatedPackets(std::vector<std::vector<uint8_t>>& packets) {
 /* Store the packets in the Queue without udp header, just raw data (payload) */
 void PacketCapture::RecivePacketHandler(uint8_t* GlobalData, const struct pcap_pkthdr* PacketHeader, const uint8_t* PacketData) {
 #ifndef MOCK_UP
+    (void)GlobalData;
     PacketRecived = true;
     std::cout << "Packet captured with length: " << PacketHeader->len << std::endl;
     const uint8_t *PayloadData = PacketData + UDP_HEADER_LENGTH;

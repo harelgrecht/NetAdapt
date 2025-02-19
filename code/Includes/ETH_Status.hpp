@@ -2,7 +2,7 @@
 #define ETH_STATUS_HPP
 
 #include "Network_Config.hpp"
-#include "GPIO_Handler.hpp"
+#include "ledHandler.hpp"
 
 class ETH_Status {
 private:
